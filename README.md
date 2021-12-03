@@ -1,7 +1,7 @@
 # NSI-project
 
 ## Groupe :
-Alexandre Patoureaux 
+Alexandre Patoureaux <br>
 Kirill Biryukov
 
 ## Premières idées : 
