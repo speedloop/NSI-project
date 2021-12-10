@@ -1,4 +1,4 @@
-# NSI-project
+# Projet NSI : 
 
 ## Groupe :
 Alexandre Patoureaux <br>
