@@ -11,3 +11,8 @@ jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis 
 Invitation: https://trello.com/invite/b/G91qzH56/de993fdb5bb91eccbcaedd4a9e904bf1/projet-nsi
 
 Lien permanant: https://trello.com/b/G91qzH56/projet-nsi
+
+
+##Projets existants ressemlants:
+Gameplay: https://store.steampowered.com/app/113200/The_Binding_of_Isaac/
+Graphismes: 
