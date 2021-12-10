@@ -14,7 +14,6 @@ Lien permanant: https://trello.com/b/G91qzH56/projet-nsi
 
 ## Projets existants ressemlants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
-          http://sheep.art.pl/Fujo<br>
           https://gist.github.com/horstjens/f3b976fe2028193c2e569ab432c9465f<br>
-Graphismes: <br>
+Graphismes : http://sheep.art.pl/Fujo<br>
 
