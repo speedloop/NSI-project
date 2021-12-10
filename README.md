@@ -5,7 +5,7 @@ Alexandre Patoureaux <br>
 Kirill Biryukov
 
 ## Idée :
-jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur (on change juste des variales, hein),avec un boss à la fin de chaque niveau.<br>
+jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur (on change juste des variables, hein),avec un boss à la fin de chaque niveau.<br>
 Génération du donjon : salles précréées (codées en texte) piochées aléatoirement lorsque le personnage entre dans une nouvelle salle en fonction de sa position (coint, bord, milieu...) (Tout ça priorité haute)<br>
 Personnage : points de vie, mort = recommencer le jeu au niveau 1<br>
 Combats : corps à corps uniquement (pour l'instant, distance envisagé mais pas en priorité), attaques dirigées, portée d'une case (armes différents avec portée différente envisagés, mais pas en priorité)<br>
