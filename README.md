@@ -1,10 +1,10 @@
-# Projet NSI : Doomed Soul 
+# Projet NSI : Doomed Souls
 
 ## Groupe :
 Alexandre Patoureaux <br>
 Kirill Biryukov
 
-## Premières idées :
+## Idée :
 jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur.
 
 ## Lien Trello:
