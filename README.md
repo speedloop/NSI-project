@@ -8,8 +8,8 @@ Kirill Biryukov
 jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur (on change juste des variales, hein),avec un boss à la fin de chaque niveau.<br>
 Génération du donjon : salles précréées piochées aléatoirement lorsque le personnage entre dans une nouvelle salle en fonction de sa position (coint, bord, milieu...)<br>
 Personnage : points de vie, mort = recommencer le jeu au niveau 1<br>
-Combats : corps à corps uniquement (pour l'instant), attaques dirigées, portée d'une case<br>
-Ennemis : différents ennemis avec différentes statistiques, points de vie (comme personnage), drop (non prioritaire)<br>
+Combats : corps à corps uniquement (pour l'instant, distance envisagé mais pas en priorité), attaques dirigées, portée d'une case (armes différents avec portée différente envisagés, mais pas en priorité)<br>
+Ennemis : différents ennemis avec différentes statistiques (variables et textures), points de vie (comme personnage), drop (non prioritaire)<br>
 
 ## Lien Trello:
 Invitation: https://trello.com/invite/b/G91qzH56/de993fdb5bb91eccbcaedd4a9e904bf1/projet-nsi
