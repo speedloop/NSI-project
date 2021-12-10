@@ -1,4 +1,4 @@
-# Projet NSI : Doomed 
+# Projet NSI : Doomed Soul 
 
 ## Groupe :
 Alexandre Patoureaux <br>
