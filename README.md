@@ -14,7 +14,7 @@ Ennemis : différents ennemis avec différentes statistiques (variables et textu
 ## Lien Trello:
 Invitation: https://trello.com/invite/b/G91qzH56/de993fdb5bb91eccbcaedd4a9e904bf1/projet-nsi
 
-Lien permanant: https://trello.com/b/G91qzH56/projet-nsi
+Planning : Lien permanant: https://trello.com/b/G91qzH56/projet-nsi
 
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
