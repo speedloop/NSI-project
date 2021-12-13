@@ -12,9 +12,7 @@ Combats : corps à corps uniquement (pour l'instant, distance envisagé mais pas
 Ennemis : différents ennemis avec différentes statistiques (variables et textures), points de vie (comme personnage), drop (non prioritaire), apparaissent dans les salles semi aléatoirement, quand on rentre dans la salle (point de spawn donnés possibles, le programe choisit les emplacement ou il y aura un monstre aléatoirement)(priorité haute sur ça)<br>
 
 ## Lien Trello:
-Invitation: https://trello.com/invite/b/G91qzH56/de993fdb5bb91eccbcaedd4a9e904bf1/projet-nsi
-
-Planning : Lien permanant: https://trello.com/b/G91qzH56/projet-nsi
+Planning : https://trello.com/b/G91qzH56/projet-nsi
 
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
