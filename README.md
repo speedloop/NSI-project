@@ -11,8 +11,8 @@ Personnage : points de vie, mort = recommencer le jeu au niveau 1<br>
 Combats : corps à corps uniquement (pour l'instant, distance envisagé mais pas en priorité), attaques dirigées, portée d'une case (armes différents avec portée différente envisagés, mais pas en priorité)<br>
 Ennemis : différents ennemis avec différentes statistiques (variables et textures), points de vie (comme personnage), drop (non prioritaire), apparaissent dans les salles semi aléatoirement, quand on rentre dans la salle (point de spawn donnés possibles, le programe choisit les emplacement ou il y aura un monstre aléatoirement)(priorité haute sur ça)<br>
 
-## Lien Trello:
-Planning : https://trello.com/b/G91qzH56/projet-nsi
+## Planning:
+Lien Trello permanant : https://trello.com/b/G91qzH56/projet-nsi
 
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
