@@ -17,7 +17,7 @@ def display_screen(screen, surfaces,rects):
 
 pygame.font.init()
 
-ecran = pygame.display.set_mode((1300,900))
+ecran = pygame.display.set_mode((1300,800))
 ecran.fill((80,80,80))
 
 font = pygame.font.Font("bouton.ttf",60)
@@ -64,6 +64,6 @@ while continuer:
             if quit_selected:
                 continuer = False
             if play_selected:
-                game()
+                continuer = game(ecran)
             
 pygame.quit()
