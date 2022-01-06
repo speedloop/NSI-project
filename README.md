@@ -9,7 +9,7 @@ jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis 
 Génération du donjon : salles précréées (codées en texte) piochées aléatoirement lorsque le personnage entre dans une nouvelle salle en fonction de sa position (coint, bord, milieu...) (Tout ça priorité haute)<br>
 Personnage : points de vie, mort = recommencer le jeu au niveau 1<br>
 Combats : corps à corps uniquement (pour l'instant, distance envisagé mais pas en priorité), attaques dirigées, portée d'une case (armes différents avec portée différente envisagés, mais pas en priorité)<br>
-Ennemis : différents ennemis avec différentes statistiques (variables et textures), points de vie (comme personnage), drop (non prioritaire), apparaissent dans les salles semi aléatoirement, quand on rentre dans la salle (point de spawn donnés possibles, le programe choisit les emplacement ou il y aura un monstre aléatoirement)(priorité haute sur ça)<br>
+Ennemis : différents ennemis avec différentes statistiques (variables et textures), points de vie (comme personnage), drop (non prioritaire), <br>
 
 ## Planning:
 Lien Trello permanant : https://trello.com/b/G91qzH56/projet-nsi
