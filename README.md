@@ -4,6 +4,14 @@
 Alexandre Patoureaux <br>
 Kirill Biryukov
 
+##Statut au 07/01:
+Léger retard. Un petit boost est en train d'être effectué.
+
+Pour faire marcher le programme:
+-Téléchargers tous les fichiers du répositoire github
+-Lancer menu.py
+-Intéragir
+
 ## Idée :
 jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur (on change juste des variables, hein),avec un boss à la fin de chaque niveau.<br>
 Génération du donjon : salles précréées (codées en texte) piochées aléatoirement lorsque le personnage entre dans une nouvelle salle en fonction de sa position (coint, bord, milieu...) (Tout ça priorité haute)<br>
