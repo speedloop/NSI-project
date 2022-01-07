@@ -4,7 +4,7 @@
 Alexandre Patoureaux <br>
 Kirill Biryukov
 
-##Statut au 07/01:
+## Statut au 07/01:
 Léger retard. Un petit boost est en train d'être effectué.
 
 Pour faire marcher le programme:
