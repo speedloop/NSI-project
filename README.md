@@ -8,8 +8,11 @@ Kirill Biryukov
 Léger retard. Un petit boost est en train d'être effectué.
 
 Pour faire marcher le programme:
+
 -Téléchargers tous les fichiers du répositoire github
+
 -Lancer menu.py
+
 -Intéragir
 
 ## Idée :
