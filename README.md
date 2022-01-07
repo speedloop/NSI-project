@@ -13,7 +13,7 @@ Pour faire marcher le programme:
 
 -Lancer menu.py
 
--Intéragir
+-Intéragir (Utiliser les flèches pour se déplacer)
 
 ## Idée :
 jeu 2d, vue d'en haut, graphismes pixelisés, génération spontanée d'ennemis et de salles, l'objectif est de survivre a chaque niveau, de plus en plus dur (on change juste des variables, hein),avec un boss à la fin de chaque niveau.<br>
