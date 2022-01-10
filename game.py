@@ -1,14 +1,12 @@
-import pygame
+import pygame,os,random
 
 def get_map_from_file(path_to_file):
     with open(path_to_file,'r') as file:
         map = file.readlines()
         for i in range(len(map)):
             map[i] = map[i].rstrip('\n')
-            print(map[i])
         file.close()
     return map
-    
     
 def get_player_initial_pos(map):
     for ligne in map:
@@ -17,6 +15,14 @@ def get_player_initial_pos(map):
                 i = map.index(ligne)
                 j = ligne.index(case)
                 return j*37+10,i*37+12
+
+def get_nb_dongeon_maps():
+    files = os.listdir(os.getcwd()+"/map")
+    nb_maps = 0
+    for file in files:
+        if "carte" in file:
+            nb_maps += 1
+    return nb_maps
 
 
 def display_room(screen,map_room):
@@ -44,6 +50,10 @@ def display_room(screen,map_room):
 def game(screen):
     speed = 2
     
+    nb_maps = get_nb_dongeon_maps()
+    dongeon_map_number = str(random.randint(1,nb_maps))
+
+
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
     
