@@ -1,5 +1,6 @@
 import pygame 
 from game import *
+from constantes import *
 
 
 
@@ -19,6 +20,8 @@ pygame.font.init()
 
 ecran = pygame.display.set_mode((1300,800))
 ecran.fill((80,80,80))
+
+clock = pygame.time.Clock()
 
 font = pygame.font.Font("bouton.ttf",60)
 play = font.render("PLAY", 1,(250,250,250))
@@ -40,6 +43,7 @@ play_selected = False
 continuer = True
 
 while continuer:
+    clock.tick(30)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             continuer = False        

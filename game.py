@@ -17,7 +17,7 @@ def get_player_initial_pos(map):
             if case == '@':
                 i = map.index(ligne)
                 j = ligne.index(case)
-                return j*37+10,i*37+12
+                return j*taille_cases+10 - (largeur_personnage//2) + taille_cases//2,i*37+12-(hauteur_personnage//2)+taille_cases//2
 
 def get_nb_dongeon_maps():
     files = os.listdir(os.getcwd()+"/map")
@@ -32,21 +32,21 @@ def display_room(screen,map_room):
     screen.fill((0,0,0))
 
     dict_textures = {
-        '#': pygame.transform.scale(pygame.image.load("wall.png"),(taille_case,taille_case)),
-        '.': pygame.transform.scale(pygame.image.load("empty.png"),(taille_case,taille_case)),
-        '_': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
-        '@': pygame.transform.scale(pygame.image.load("spawner.png"),(taille_case,taille_case)),
-        ':': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
-        '!': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
-        '?': pygame.transform.scale(pygame.image.load("chest.jpg"),(taille_case,taille_case))
+        '#': pygame.transform.scale(pygame.image.load("wall.png"),(taille_cases,taille_cases)),
+        '.': pygame.transform.scale(pygame.image.load("empty.png"),(taille_cases,taille_cases)),
+        '_': pygame.transform.scale(pygame.image.load("floor.png"),(taille_cases,taille_cases)),
+        '@': pygame.transform.scale(pygame.image.load("spawner.png"),(taille_cases,taille_cases)),
+        ':': pygame.transform.scale(pygame.image.load("floor.png"),(taille_cases,taille_cases)),
+        '!': pygame.transform.scale(pygame.image.load("floor.png"),(taille_cases,taille_cases)),
+        '?': pygame.transform.scale(pygame.image.load("chest.jpg"),(taille_cases,taille_cases))
     }
 
     for i in range(len(map_room)):
         for j in range(len(map_room[i])):
-            screen.blit(dict_textures[map_room[i][j]], (taille_case*j+10,taille_case*i+12))
+            screen.blit(dict_textures[map_room[i][j]], (taille_cases*j+10,taille_cases*i+12))
             
             if map_room[i][j] == '!': #mob
-                pos_mob = (taille_case*j+10,taille_case*i+12)
+                pos_mob = (taille_cases*j+10,taille_cases*i+12)
                 screen.blit(pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37)), pos_mob)
 
 pygame.font.init()
@@ -58,8 +58,7 @@ def vie(viest,viechangement):
     return (str(nbvies))
 
 def game(screen):
-    
-    speed = 10
+    clock = pygame.time.Clock()
     
     nb_maps = get_nb_dongeon_maps()
     dongeon_map_number = str(random.randint(1,nb_maps))
@@ -87,6 +86,7 @@ def game(screen):
     #gestion des évènements
     continuer = True
     while continuer:
+        clock.tick(100)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -115,16 +115,16 @@ def game(screen):
                     left = True
                     
         if left :  #si fleche gauche enfoncee 
-            if test_collide((x_player,y_player), map,"GAUCHE"):  #si aucun mur a gauche
+            if test_collide((x_player-speed,y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
                 x_player -= speed
         if right : #si fleche droite enfoncee 
-            if test_collide((x_player,y_player),map, "DROITE"): #si aucun mur a droite
+            if test_collide((x_player+speed,y_player),map, "DROITE",screen): #si le personnage ne collide pas avec un mur si il se deplace a droite
                 x_player += speed
         if up:    #si fleche haut enfoncee 
-            if test_collide((x_player,y_player),map, "HAUT"):   #si aucun mur au dessus
+            if test_collide((x_player,y_player-speed),map, "HAUT",screen):   #si le personnage ne collide pas avec un mur si il se deplace en haut
                 y_player -= speed
         if down:  #si fleche bas enfoncee 
-            if test_collide((x_player,y_player),map, "BAS"):    #si aucun mur en dessous
+            if test_collide((x_player,y_player+speed),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
                 y_player += speed
         
         
