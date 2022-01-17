@@ -32,21 +32,21 @@ def display_room(screen,map_room):
     screen.fill((0,0,0))
 
     dict_textures = {
-        '#': pygame.transform.scale(pygame.image.load("wall.png"),(37,37)),
-        '.': pygame.transform.scale(pygame.image.load("empty.png"),(37,37)),
-        '_': pygame.transform.scale(pygame.image.load("floor.png"),(37,37)),
-        '@': pygame.transform.scale(pygame.image.load("spawner.png"),(37,37)),
-        ':': pygame.transform.scale(pygame.image.load("floor.png"),(37,37)),
-        '!': pygame.transform.scale(pygame.image.load("floor.png"),(37,37)),
-        '?': pygame.transform.scale(pygame.image.load("chest.jpg"),(37,37))
+        '#': pygame.transform.scale(pygame.image.load("wall.png"),(taille_case,taille_case)),
+        '.': pygame.transform.scale(pygame.image.load("empty.png"),(taille_case,taille_case)),
+        '_': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
+        '@': pygame.transform.scale(pygame.image.load("spawner.png"),(taille_case,taille_case)),
+        ':': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
+        '!': pygame.transform.scale(pygame.image.load("floor.png"),(taille_case,taille_case)),
+        '?': pygame.transform.scale(pygame.image.load("chest.jpg"),(taille_case,taille_case))
     }
 
     for i in range(len(map_room)):
         for j in range(len(map_room[i])):
-            screen.blit(dict_textures[map_room[i][j]], (37*j+10,37*i+12))
+            screen.blit(dict_textures[map_room[i][j]], (taille_case*j+10,taille_case*i+12))
             
             if map_room[i][j] == '!': #mob
-                pos_mob = (37*j+10,37*i+12)
+                pos_mob = (taille_case*j+10,taille_case*i+12)
                 screen.blit(pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37)), pos_mob)
 
 pygame.font.init()
@@ -75,7 +75,7 @@ def game(screen):
     screen.blit(v,vies_rect)
     
     x_player,y_player = get_player_initial_pos(map)    
-    player = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(19,20))
+    player = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(largeur_personnage,hauteur_personnage))
 
     up,down,right,left = False,False,False,False
     
