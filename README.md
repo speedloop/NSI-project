@@ -17,7 +17,7 @@ Lien Trello permanant : https://trello.com/b/G91qzH56/projet-nsi
 ## Controles:
 Fleches dirrectionneles pour bouger.
 Q pour revenir au menu, en tout moment
-# Cheat:
+#### Cheat:
 Kpad plus pour ajouter des vies
 Kpad moins pour retirer des vies
 
