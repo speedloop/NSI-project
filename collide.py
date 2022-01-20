@@ -20,7 +20,7 @@ def get_walls_rect(map):
 
 
 def test_collide(player_pos,map,direction,screen):
-    """retourne True si le personnage peut avancer sans foncer dans un mur, sinon, retourne False"""
+    """retourne True si le personnage peut avancer sans foncer dans un mur, sinon, retourne False, boolean"""
     
     haut_droite = (player_pos[0] + largeur_personnage, player_pos[1])
     bas_droite = (player_pos[0] + largeur_personnage,player_pos[1] + hauteur_personnage)

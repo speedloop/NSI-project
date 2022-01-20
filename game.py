@@ -1,4 +1,6 @@
 from pydoc import render_doc
+from tkinter import EventType
+from turtle import Screen
 import pygame,os,random
 from collide import test_collide
 from constantes import *
@@ -29,6 +31,7 @@ def get_nb_dongeon_maps():
 
 
 def display_room(screen,map_room):
+    """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
     screen.fill((0,0,0))
 
     dict_textures = {
@@ -52,41 +55,45 @@ def display_room(screen,map_room):
 pygame.font.init()
 
 def vie(viest,viechangement):
+    """Cette fonction prends en variable le nombre de vies initial et la difference, et retourne le nombre de vies finales, 
+    pas plus de 9 vies"""
     nbvies= viechangement+int(viest)
     if nbvies>9:
         nbvies=9
     return (str(nbvies))
 
+
 def game(screen):
+    '''Fonction pricipale du jeu actif'''
     clock = pygame.time.Clock()
     
     nb_maps = get_nb_dongeon_maps()
     dongeon_map_number = str(random.randint(1,nb_maps))
 
-
+ #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
-    
-    vies='3'
-    font_vies = pygame.font.Font("bouton.ttf",60)
-    v=font_vies.render(vies,1,(255,50,50))
-    vies_rect = pygame.rect.Rect((len(map)*taille_cases+10,12,v.get_width(),v.get_height()))
-    screen.blit(v,vies_rect)
-    
+ #-----------------------------------------------------------------------
+
     x_player,y_player = get_player_initial_pos(map)    
     player = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(largeur_personnage,hauteur_personnage))
 
     up,down,right,left = False,False,False,False
     
-    
-    
-    
-    
-    
-    #gestion des évènements
+    #Affichage des vies initial-----
+    vies='3'
+    font_vies = pygame.font.Font("bouton.ttf",60)
+    v=font_vies.render(vies,1,(255,50,50))
+    vies_rect = pygame.rect.Rect((len(map)*taille_cases+10,12,v.get_width(),v.get_height()))
+    coeur = pygame.transform.scale(pygame.image.load("heart.png"),(v.get_height(),v.get_height()))
+    coeur_rect = pygame.rect.Rect((len(map)*taille_cases+20+v.get_width(),12,v.get_height(),v.get_height()))
+    #---------------------------------
+
+    #Partie principale du jeu qui tourne en permanence:
     continuer = True
     while continuer:
         clock.tick(100)
+        #Gestions des touches en jeu----------------------
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return False
@@ -113,6 +120,17 @@ def game(screen):
                     right = True
                 if event.key == pygame.K_LEFT:
                     left = True
+                if event.key == pygame.K_KP_PLUS:
+                    vies=vie(vies,1)
+                    v=font_vies.render(vies,1,(255,50,50))
+                    screen.blit(v,vies_rect)
+                if event.key == pygame.K_KP_MINUS:
+                    vies=vie(vies,-1)
+                    v=font_vies.render(vies,1,(255,50,50))
+                    screen.blit(v,vies_rect)
+
+        #--------------------------------------------------------
+
                     
         if left :  #si fleche gauche enfoncee 
             if test_collide((x_player-speed,y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
@@ -127,10 +145,30 @@ def game(screen):
             if test_collide((x_player,y_player+speed),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
                 y_player += speed
         
+        #Ecran game over----------------------------
+        if vies == "0":
+                screen.fill((0,0,0))
+                mort_font = pygame.font.Font("title.ttf",64)
+                mort_titre = mort_font.render("YOU ARE DEAD...",1,(255,255,255))
+                mort_rect=vies_rect = ((50,12,v.get_width(),v.get_height()))
+                screen.blit(mort_titre,mort_rect)
+                pygame.display.update()
+                ecranmort = 0
+                while ecranmort == 0:
+                    for event in pygame.event.get():
+                        if event.type == pygame.QUIT:
+                            return False
+                        if event.type == pygame.KEYDOWN: 
+                            if event.key == pygame.K_q:
+                                return True
+        #-----------------------------------------
+    
+                
         
         display_room(screen,map)
         screen.blit(player,(x_player,y_player))
         screen.blit(v,vies_rect)
+        screen.blit(coeur,coeur_rect)
         pygame.display.update()
 
 
