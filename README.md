@@ -14,6 +14,13 @@ Ennemis : différents ennemis avec différentes statistiques (variables et textu
 ## Planning:
 Lien Trello permanant : https://trello.com/b/G91qzH56/projet-nsi
 
+## Controles:
+Fleches dirrectionneles pour bouger.
+Q pour revenir au menu, en tout moment
+# Cheat:
+Kpad plus pour ajouter des vies
+Kpad moins pour retirer des vies
+
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
           https://gist.github.com/horstjens/f3b976fe2028193c2e569ab432c9465f<br>
