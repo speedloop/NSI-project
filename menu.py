@@ -18,7 +18,7 @@ def display_screen(screen, surfaces,rects):
     
     
 
-#Creations des textes dans le menu----------------
+#Creations des textes dans le menu (play,quit)----------------
 
 pygame.font.init()
 
