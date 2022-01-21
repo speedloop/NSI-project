@@ -70,7 +70,7 @@ def game(screen):
     
 
  #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
-    path_to_map = "salle.txt"
+    path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
  #-----------------------------------------------------------------------
 
