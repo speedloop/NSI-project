@@ -4,8 +4,10 @@ from turtle import Screen
 import pygame,os,random,time
 
 from collide import test_collide
+from detect_exit import detect_exit
+from change_room import change_room
+from create_dungeon import create_dungeon,init_pos_dungeon
 from constantes import *
-from create_dungeon import *
 
 
 def get_map_from_file(path_to_file):
@@ -67,6 +69,9 @@ def game(screen):
     dungeon_map_number = str(random.randint(1,nb_maps))
     dungeon_map = get_map_from_file("map/carte "+dungeon_map_number)
     dungeon = create_dungeon(dungeon_map)
+    dungeon_pos = init_pos_dungeon(dungeon)
+    print(dungeon)
+    print(dungeon_pos)
     
 
  #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
@@ -92,6 +97,7 @@ def game(screen):
     continuer = True
     while continuer:
         clock.tick(30)
+        exits = detect_exit(map,(x_player,y_player))
         #Gestions des touches en jeu----------------------
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -110,7 +116,11 @@ def game(screen):
                     left = False
                     
                     
-            if event.type == pygame.KEYDOWN:                
+            if event.type == pygame.KEYDOWN: 
+                if event.key == pygame.K_SPACE:
+                    if True in exits: #le personnage se trouve sur une des sorties
+                        dungeon_pos = change_room(dungeon,dungeon_pos,exits)
+                        map = dungeon[dungeon_pos]       
                 if event.key == pygame.K_DOWN:
                     down = True                    
                 if event.key == pygame.K_UP:
@@ -174,8 +184,8 @@ def game(screen):
                             if event.key == pygame.K_q:
                                 return True
         #-----------------------------------------
-    
-                
+            
+        
         display_room(screen,map)
         screen.blit(player,(x_player,y_player))
         screen.blit(v,vies_rect)

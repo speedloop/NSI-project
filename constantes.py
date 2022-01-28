@@ -20,23 +20,23 @@ dict_textures = {
 
 #correspondances entre les caracteres du fichier du donjon codifié avec leur salle 
 dict_salles = {
-    '@':"/rooms/lobby/",
-    'x':"/rooms/croisement/",
-    'h':"/rooms/horizontal/",
-    'v':"/rooms/vertical/",
-    'z':"/rooms/triple N-E-S/",
-    's':"/rooms/impasse entree sud/",
-    'n':"/rooms/impasse entree nord/",
-    'e':"/rooms/impasse entree est/",
-    'o':"/rooms/impasse entree ouest/",
-    'p':"/rooms/coin est sud/",
-    'l':"/rooms/coin nord est/",
-    'j':"/rooms/coin ouest nord/",
-    'i':"/rooms/coin sud ouest/",
-    'c':"/rooms/triple O-N-E/",
-    'g':"/rooms/triple S-O-N/",
-    't':"/rooms/triple O-S-E/",
-    'f':"/rooms/boss/"    
+    '@':"rooms/lobby/",
+    'x':"rooms/croisement/",
+    'h':"rooms/horizontal/",
+    'v':"rooms/vertical/",
+    'z':"rooms/triple N-E-S/",
+    's':"rooms/impasse entree sud/",
+    'n':"rooms/impasse entree nord/",
+    'e':"rooms/impasse entree est/",
+    'o':"rooms/impasse entree ouest/",
+    'p':"rooms/coin est sud/",
+    'l':"rooms/coin nord est/",
+    'j':"rooms/coin ouest nord/",
+    'i':"rooms/coin sud ouest/",
+    'c':"rooms/triple O-N-E/",
+    'g':"rooms/triple S-O-N/",
+    't':"rooms/triple O-S-E/",
+    'f':"rooms/boss/"    
 }
 
 
