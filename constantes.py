@@ -1,5 +1,9 @@
 import pygame
 
+
+pygame.font.init()
+
+
 #definition de constantes
 
 taille_cases = 37     
@@ -15,7 +19,8 @@ dict_textures = {
     '@': pygame.transform.scale(pygame.image.load("textures/spawner.png"),(taille_cases,taille_cases)),
     ':': pygame.transform.scale(pygame.image.load("textures/floor.png"),(taille_cases,taille_cases)),
     '!': pygame.transform.scale(pygame.image.load("textures/floor.png"),(taille_cases,taille_cases)),
-    '?': pygame.transform.scale(pygame.image.load("textures/chest.jpg"),(taille_cases,taille_cases))
+    '?': pygame.transform.scale(pygame.image.load("textures/chest.jpg"),(taille_cases,taille_cases)),
+    '^': pygame.transform.scale(pygame.image.load("textures/open_chest.jpg"),(taille_cases,taille_cases))
 }
 
 #correspondances entre les caracteres du fichier du donjon codifié avec leur salle 
@@ -39,11 +44,11 @@ dict_salles = {
     'f':"rooms/boss/"    
 }
 
-
-
+#definition de fonts
+tip_font = pygame.font.Font("fonts/optimus.ttf",36)
 
 #definition de la surface du bonhomme de neige
-mob_surf = pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37))
+mob_surf = pygame.transform.scale(pygame.image.load("mobs/sapin.png"),(32,37))
 
 def constantes():
     global speed

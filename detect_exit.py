@@ -22,7 +22,7 @@ def detect_exit(map_room,pos_player):
         (10,10*taille_cases+12,taille_cases,taille_cases),  #sortie ouest
         (9*taille_cases+10,12,taille_cases,taille_cases),   #sortie nord
         (18*taille_cases+10,10*taille_cases+12,taille_cases,taille_cases),  #sortie est
-        (20*taille_cases+10,9*taille_cases+12,taille_cases,taille_cases)    #sortie sud
+        (9*taille_cases+10,20*taille_cases+12,taille_cases,taille_cases)    #sortie sud
     ]
     
     exits_rects = get_exits_rects(map_room)

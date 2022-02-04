@@ -6,6 +6,7 @@ import pygame,os,random,time
 from collide import test_collide
 from detect_exit import detect_exit
 from change_room import change_room
+from chests import player_on_chest
 from create_dungeon import create_dungeon,init_pos_dungeon
 from constantes import *
 
@@ -70,8 +71,11 @@ def game(screen):
     dungeon_map = get_map_from_file("map/carte "+dungeon_map_number)
     dungeon = create_dungeon(dungeon_map)
     dungeon_pos = init_pos_dungeon(dungeon)
-    print(dungeon)
     print(dungeon_pos)
+    for key in dungeon.keys():
+        print(key)
+        for ligne in dungeon[key]:
+            print(ligne)
     
 
  #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
@@ -95,9 +99,12 @@ def game(screen):
 
     #Partie principale du jeu qui tourne en permanence:
     continuer = True
+    on_chest = False
     while continuer:
         clock.tick(30)
         exits = detect_exit(map,(x_player,y_player))
+        on_chest = player_on_chest(dungeon[dungeon_pos],(x_player,y_player))
+                            
         #Gestions des touches en jeu----------------------
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -119,8 +126,20 @@ def game(screen):
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_SPACE:
                     if True in exits: #le personnage se trouve sur une des sorties
-                        dungeon_pos = change_room(dungeon,dungeon_pos,exits)
-                        map = dungeon[dungeon_pos]       
+                        dungeon_pos,pos_player = change_room(dungeon,dungeon_pos,(x_player,y_player),exits)
+                        print(dungeon_pos)
+                        x_player = pos_player[0]
+                        y_player = pos_player[1] 
+                        map = dungeon[dungeon_pos] 
+                         
+                if event.key == pygame.K_e:
+                    if on_chest != False: #le personnage collide avec un coffre
+                        line = map[on_chest[0]]
+                        new_line = line[:on_chest[1]] + '^'+line[on_chest[1]+1:]
+                        map[on_chest[0]] = new_line
+                        dungeon[dungeon_pos] = map
+                        on_chest = False
+                        
                 if event.key == pygame.K_DOWN:
                     down = True                    
                 if event.key == pygame.K_UP:
@@ -144,23 +163,15 @@ def game(screen):
         if left :  #si fleche gauche enfoncee 
             if test_collide((x_player-speed,y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
                 x_player -= speed
-            else:
-                print("collide")
         if right : #si fleche droite enfoncee 
             if test_collide((x_player+speed,y_player),map, "DROITE",screen): #si le personnage ne collide pas avec un mur si il se deplace a droite
                 x_player += speed
-            else:
-                print("collide")
         if up:    #si fleche haut enfoncee 
             if test_collide((x_player,y_player-speed),map, "HAUT",screen):   #si le personnage ne collide pas avec un mur si il se deplace en haut
                 y_player -= speed
-            else:
-                print("collide")
         if down:  #si fleche bas enfoncee 
             if test_collide((x_player,y_player+speed),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
                 y_player += speed
-            else:
-                print("collide")
         
         #Ecran game over----------------------------
         if vies == "0":
@@ -188,6 +199,14 @@ def game(screen):
         
         display_room(screen,map)
         screen.blit(player,(x_player,y_player))
+        pygame.draw.rect(screen,(0,0,0),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)))
+        pygame.draw.rect(screen,(255,255,255),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)),1,border_radius = 40)
+        if True in exits: #le personnage est sur une sortie
+            travel_tip = tip_font.render("Press space to travel",1,(255,255,255))
+            screen.blit(travel_tip,(19*taille_cases+30,20*taille_cases+12))
+        elif on_chest != False:
+            chest_tip = tip_font.render("Press 'e' to open chest",1,(255,255,255))
+            screen.blit(chest_tip,(19*taille_cases+30,20*taille_cases+12))
         screen.blit(v,vies_rect)
         screen.blit(coeur,coeur_rect)
         pygame.display.update()

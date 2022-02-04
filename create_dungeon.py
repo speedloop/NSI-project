@@ -47,5 +47,4 @@ def init_pos_dungeon(dungeon):
         for i in range(len(map)):
             for j in range(len(map[i])):
                 if map[i][j] == '@': #spawn trouvé
-                    return key
-        
+                    return key        

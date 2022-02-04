@@ -27,6 +27,21 @@ def test_collide(player_pos,map,direction,screen):
         #on parcours chaque rect de chaque mur
         if player_rect.colliderect(wall):  #si le personnage est en contact avec l'un d'entre eux :
             return False    #alors il ne peut pas avancer
+    
+    min_x  = player_pos[0]
+    min_y = player_pos[1]
+    max_x = min_x + largeur_personnage
+    max_y = min_y + hauteur_personnage
+    
+    if max_x > 19*taille_cases+10: #le personnage va sortir de la map côté est
+        return False
+    if max_y > 21*taille_cases+12: #le personnage va sortir de la map côté sud
+        return False
+    if min_x < 10: #le personnage va sortir de la map côté est
+        return False
+    if min_y < 12: #le personnage va sortir de la map côté nord 
+        return False
+    
     return True  #feux vert
     
     
