@@ -10,6 +10,14 @@ taille_cases = 37
 hauteur_personnage = 30
 largeur_personnage = 29
 speed = 5
+fps = 90
+
+size_icon_setting = 60
+
+
+#definition de fonts
+tip_font = pygame.font.Font("fonts/optimus.ttf",36)
+brush_font = pygame.font.Font("fonts/brush.ttf",40)
 
 #correspondances entre les caracteres du fichier de la carte codifiée avec leur texture
 dict_textures = {
@@ -22,6 +30,11 @@ dict_textures = {
     '?': pygame.transform.scale(pygame.image.load("textures/chest.jpg"),(taille_cases,taille_cases)),
     '^': pygame.transform.scale(pygame.image.load("textures/open_chest.jpg"),(taille_cases,taille_cases))
 }
+
+#autres textures 
+v = brush_font.render("1",1,(255,255,255))
+heart = pygame.transform.scale(pygame.image.load("textures/heart.png"),(v.get_height(),v.get_height()))
+settings_icon = pygame.transform.scale(pygame.image.load("textures/settings.png"),(size_icon_setting,size_icon_setting))
 
 #correspondances entre les caracteres du fichier du donjon codifié avec leur salle 
 dict_salles = {
@@ -44,14 +57,12 @@ dict_salles = {
     'f':"rooms/boss/"    
 }
 
-#definition de fonts
-tip_font = pygame.font.Font("fonts/optimus.ttf",36)
-
 #definition de la surface du bonhomme de neige
-mob_surf = pygame.transform.scale(pygame.image.load("mobs/sapin.png"),(32,37))
+mob_surf = pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37))
 
 def constantes():
     global speed
     global taille_cases
     global hauteur_personnage
     global largeur_personnage
+    global mob_surf

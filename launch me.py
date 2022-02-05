@@ -1,5 +1,6 @@
 import pygame 
 from game import *
+from settings import settings
 from constantes import *
 
 
@@ -36,14 +37,14 @@ quit_rect = pygame.rect.Rect((50,730,quit.get_width(),quit.get_height()))
 font_title = pygame.font.Font("fonts/title.ttf",64)
 title_surf = font_title.render("DOOMED SOULS",1,(255,255,255))
 
-pygame.display.update()
+settings_pos = (1300-(settings_icon.get_width()+10),10)
+settings_rect = pygame.rect.Rect(settings_pos + (settings_icon.get_width(),settings_icon.get_height()))
 
 #--------------------------------------
 
-salle = []
-
 quit_selected = False
 play_selected = False
+settings_selected = False
 
 
 continuer = True
@@ -68,6 +69,12 @@ while continuer:
                 quit_selected = True
             else: 
                 quit_selected = False
+
+            #affiche d'un rectangle de sélection autour de l'icône des réglages
+            if test_collide(mouse_pos,settings_rect):
+                settings_selected = True
+            else: 
+                settings_selected = False
                 
             
         #Execution des actions lors de la pression d'un des bouttons
@@ -76,13 +83,17 @@ while continuer:
                 continuer = False
             if play_selected:
                 continuer = game(ecran)
+            if settings_selected:
+                continuer = settings(ecran)
                 
     #affichage du menu 
     ecran.fill((80,80,80))
     if quit_selected:   #affichage d'un "rectangle de sélection" autour du bouton quit si la souris est dessus
-        pygame.draw.rect(ecran,(0,0,0),(45,725,quit.get_width()+15,60),border_radius=5) 
+        pygame.draw.rect(ecran,(0,0,0),(45,735,quit.get_width()+15,60),border_radius=5) 
     if play_selected:   #affichage d'un "rectangle de sélection" autour du bouton play si la souris est dessus
-        pygame.draw.rect(ecran,(0,0,0),(45,645,play.get_width()+15,60),border_radius=5)
-    display_screen(ecran, [play,quit,title_surf],[(50,650),(50,730),(ecran.get_width()/2-title_surf.get_width()/2,100)])    
+        pygame.draw.rect(ecran,(0,0,0),(45,655,play.get_width()+15,60),border_radius=5)
+    if settings_selected:
+        pygame.draw.rect(ecran,(0,0,0),(settings_pos[0]-5,settings_pos[1]-5,settings_icon.get_width()+10,settings_icon.get_height()+10),border_radius = 5)
+    display_screen(ecran, [play,quit,title_surf,settings_icon],[(50,650),(50,730),(ecran.get_width()/2-title_surf.get_width()/2,100),settings_pos])    
             
 pygame.quit()

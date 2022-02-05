@@ -1,6 +1,3 @@
-from pydoc import render_doc
-from tkinter import EventType
-from turtle import Screen
 import pygame,os,random,time
 
 from collide import test_collide
@@ -53,13 +50,6 @@ def display_room(screen,map_room):
 
 pygame.font.init()
 
-def vie(viest,viechangement):
-    """Cette fonction prends en variable le nombre de vies initial et la difference, et retourne le nombre de vies finales, 
-    pas plus de 9 vies"""
-    nbvies= viechangement+int(viest)
-    if nbvies>9:
-        nbvies=9
-    return (str(nbvies))
 
 
 def game(screen):
@@ -89,19 +79,17 @@ def game(screen):
     up,down,right,left = False,False,False,False
     
     #Affichage des vies initial-----
-    vies='3'
-    font_vies = pygame.font.Font("fonts/bouton.ttf",60)
-    v=font_vies.render(vies,1,(255,50,50))
-    vies_rect = pygame.rect.Rect((len(map)*taille_cases+10,12,v.get_width(),v.get_height()))
-    coeur = pygame.transform.scale(pygame.image.load("textures/heart.png"),(v.get_height(),v.get_height()))
-    coeur_rect = pygame.rect.Rect((len(map)*taille_cases+20+v.get_width(),12,v.get_height(),v.get_height()))
+    vies=3
+    vies_surf=brush_font.render(str(vies),1,(255,50,50))
+    vies_pos = (20*taille_cases,12)
+    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
     #---------------------------------
 
     #Partie principale du jeu qui tourne en permanence:
     continuer = True
     on_chest = False
     while continuer:
-        clock.tick(30)
+        clock.tick(fps)
         exits = detect_exit(map,(x_player,y_player))
         on_chest = player_on_chest(dungeon[dungeon_pos],(x_player,y_player))
                             
@@ -127,7 +115,6 @@ def game(screen):
                 if event.key == pygame.K_SPACE:
                     if True in exits: #le personnage se trouve sur une des sorties
                         dungeon_pos,pos_player = change_room(dungeon,dungeon_pos,(x_player,y_player),exits)
-                        print(dungeon_pos)
                         x_player = pos_player[0]
                         y_player = pos_player[1] 
                         map = dungeon[dungeon_pos] 
@@ -149,13 +136,13 @@ def game(screen):
                 if event.key == pygame.K_LEFT:
                     left = True
                 if event.key == pygame.K_KP_PLUS:
-                    vies=vie(vies,1)
-                    v=font_vies.render(vies,1,(255,50,50))
-                    screen.blit(v,vies_rect)
+                    vies+=1
+                    vies_surf=brush_font.render(str(vies),1,(255,50,50))                    
+                    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
                 if event.key == pygame.K_KP_MINUS:
-                    vies=vie(vies,-1)
-                    v=font_vies.render(vies,1,(255,50,50))
-                    screen.blit(v,vies_rect)
+                    vies-=1
+                    vies_surf=brush_font.render(str(vies),1,(255,50,50))                    
+                    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
 
         #--------------------------------------------------------
 
@@ -174,11 +161,11 @@ def game(screen):
                 y_player += speed
         
         #Ecran game over----------------------------
-        if vies == "0":
+        if vies == 0:
                 screen.fill((0,0,0))
                 mort_font = pygame.font.Font("fonts/title.ttf",64)
                 mort_titre = mort_font.render("YOU ARE DEAD...",1,(255,255,255))
-                mort_rect=vies_rect = ((50,12,v.get_width(),v.get_height()))                
+                mort_rect= (50,12,vies_surf.get_width(),vies_surf.get_height())                
                 screen.blit(mort_titre,mort_rect)
                 
                 quit_font = pygame.font.Font("fonts/title.ttf",20)
@@ -207,8 +194,8 @@ def game(screen):
         elif on_chest != False:
             chest_tip = tip_font.render("Press 'e' to open chest",1,(255,255,255))
             screen.blit(chest_tip,(19*taille_cases+30,20*taille_cases+12))
-        screen.blit(v,vies_rect)
-        screen.blit(coeur,coeur_rect)
+        screen.blit(vies_surf,vies_pos)
+        screen.blit(heart,coeur_pos)
         pygame.display.update()
 
 
