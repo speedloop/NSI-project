@@ -50,7 +50,18 @@ def display_room(screen,map_room):
 
 pygame.font.init()
 
-
+def viechange(v,vmax,bouc,vchange):
+    """Fonction qui permet calculer les vies apres une attaque. Prend en parametres: nombre de vie initial, nombre de vies max,
+    la valeur defensive, et le changement de vie positif ou negatif"""
+    if vchange<0:
+        if vchange<bouc:
+            v+=vchange
+    if vchange>0:
+        if v+vchange<vmax:
+            v+=vchange
+        else:
+            v=vmax
+    return(v)
 
 def game(screen):
     '''Fonction pricipale du jeu actif'''
@@ -79,10 +90,17 @@ def game(screen):
     up,down,right,left = False,False,False,False
     
     #Affichage des vies initial-----
-    vies=3
-    vies_surf=brush_font.render(str(vies),1,(255,50,50))
+    vies=100
+    vies_max=100
+    defense =0
+    vies_a_afficher=str(vies)+" / "+str(vies_max)
+    vies_surf=brush_font.render(str(vies_a_afficher),1,(255,50,50))
     vies_pos = (20*taille_cases,12)
-    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
+    vies_surf_pour_calcs=brush_font.render(("888 / 888"),1,(255,50,50))
+    coeur_pos = (20*taille_cases + vies_surf_pour_calcs.get_width(),12)
+    defense_surf = brush_font.render(str(defense),1,(255,50,50))
+    defense_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + 200,12)
+    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,12)
     #---------------------------------
 
     #Partie principale du jeu qui tourne en permanence:
@@ -135,14 +153,32 @@ def game(screen):
                     right = True
                 if event.key == pygame.K_LEFT:
                     left = True
+            #Cheats por les vies -----------------------------------------------------
                 if event.key == pygame.K_KP_PLUS:
-                    vies+=1
-                    vies_surf=brush_font.render(str(vies),1,(255,50,50))                    
-                    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
+                    vies=viechange(vies,vies_max,defense,1)
+                    vies_a_afficher=str(vies)+" / "+str(vies_max)
+                    vies_surf=brush_font.render(str(vies_a_afficher),1,(255,50,50))
                 if event.key == pygame.K_KP_MINUS:
-                    vies-=1
-                    vies_surf=brush_font.render(str(vies),1,(255,50,50))                    
-                    coeur_pos = (20*taille_cases + vies_surf.get_width(),12)
+                    vies=viechange(vies,vies_max,defense,-1)
+                    vies_a_afficher=str(vies)+" / "+str(vies_max)
+                    vies_surf=brush_font.render(str(vies_a_afficher),1,(255,50,50))
+            #Cheats por la defense --------------------------------------------------
+                if event.key == pygame.K_KP_MULTIPLY:
+                    defense+=1
+                    if defense<0:
+                        defense = 0
+                    if defense > 99:
+                        defense = 99
+                    defense_surf = brush_font.render(str(defense),1,(255,50,50))
+                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,12)
+                if event.key == pygame.K_KP_DIVIDE:
+                    defense-=1
+                    if defense<0:
+                        defense = 0
+                    if defense > 99:
+                        defense = 99
+                    defense_surf = brush_font.render(str(defense),1,(255,50,50))
+                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,12)
 
         #--------------------------------------------------------
 
@@ -161,14 +197,14 @@ def game(screen):
                 y_player += speed
         
         #Ecran game over----------------------------
-        if vies == 0:
+        if vies < 1:
                 screen.fill((0,0,0))
-                mort_font = pygame.font.Font("fonts/optimus.ttf",64)
+                mort_font = pygame.font.Font("fonts/title.ttf",64)
                 mort_titre = mort_font.render("YOU ARE DEAD...",1,(255,255,255))
                 mort_rect= (50,12,vies_surf.get_width(),vies_surf.get_height())                
                 screen.blit(mort_titre,mort_rect)
                 
-                quit_font = pygame.font.Font("fonts/optimus.ttf",20)
+                quit_font = pygame.font.Font("fonts/title.ttf",20)
                 message_quit = mort_font.render("Press 'q' to restart",1,(255,255,255))
                 screen.blit(message_quit,(750,700))
                 
@@ -196,6 +232,8 @@ def game(screen):
             screen.blit(chest_tip,(19*taille_cases+30,20*taille_cases+12))
         screen.blit(vies_surf,vies_pos)
         screen.blit(heart,coeur_pos)
+        screen.blit(shield_icon,shield_pos)
+        screen.blit(defense_surf,defense_pos)
         pygame.display.update()
 
 
