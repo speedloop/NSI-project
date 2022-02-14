@@ -6,7 +6,6 @@ pygame.font.init()
 taille_cases = 37     
 hauteur_personnage = 30
 largeur_personnage = 29
-speed = 5
 fps = 90
 
 size_icon_setting = 60
@@ -62,7 +61,6 @@ dict_salles = {
 mob_surf = pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37))
 
 def constantes():
-    global speed
     global taille_cases
     global hauteur_personnage
     global largeur_personnage

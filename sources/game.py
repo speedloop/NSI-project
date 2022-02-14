@@ -6,6 +6,7 @@ from sources.change_room import change_room
 from sources.chests import player_on_chest
 from sources.create_dungeon import create_dungeon,init_pos_dungeon
 from sources.constantes import *
+from sources.objets import *
 
 
 def get_map_from_file(path_to_file):
@@ -50,25 +51,13 @@ def display_room(screen,map_room):
 
 pygame.font.init()
 
-def viechange(v,vmax,bouc,vchange):
-    """Fonction qui permet calculer les vies apres une attaque. Prend en parametres: nombre de vie initial, nombre de vies max,
-    la valeur defensive, et le changement de vie positif ou negatif"""
-    if vchange<0:
-        if vchange<bouc:
-            v+=vchange
-    if vchange>0:
-        if v+vchange<vmax:
-            v+=vchange
-        else:
-            v=vmax
-    return(v)
 
 def game(screen):
     '''Fonction pricipale du jeu actif'''
     clock = pygame.time.Clock()
     
     nb_maps = get_nb_dungeon_maps()
-    dungeon_map_number = str(random.randint(1,nb_maps))
+    dungeon_map_number = str(randint(1,nb_maps))
     dungeon_map = get_map_from_file("map/carte "+dungeon_map_number)
     dungeon = create_dungeon(dungeon_map)
     dungeon_pos = init_pos_dungeon(dungeon)
@@ -89,19 +78,23 @@ def game(screen):
 
     up,down,right,left = False,False,False,False
     
+    #Creation des variables non constantes, utilise dans les systemes de vie et d'inventaire
+    vnc = {
+    "vies" : 100, "vies_max": 100, "defense" : 0, "speed": 5, "inventaire" : [objets["..."]]*9
+    }
     #Affichage des vies initial-----
-    vies=100
-    vies_max=100
-    defense =0
-    vies_a_afficher=str(vies)+" / "+str(vies_max)
+    
+    vies_a_afficher=str(vnc["vies"])+" / "+str(vnc["vies_max"])
     vies_surf=berp_font.render(str(vies_a_afficher),1,(255,50,50))
     vies_pos = (20*taille_cases,12)
     vies_surf_pour_calcs=berp_font.render(("888 / 888"),1,(255,50,50))
     coeur_pos = (20*taille_cases + vies_surf_pour_calcs.get_width(),12)
-    defense_surf = berp_font.render(str(defense),1,(255,50,50))
+    defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
     defense_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + 200,12)
-    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
-    #---------------------------------
+    defense_surface_pour_calcs =berp_font.render(("888"),1,(255,50,50))
+    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surface_pour_calcs.get_width() + 207,8)
+     
+    #-------------------------------------------------------
 
     #Partie principale du jeu qui tourne en permanence:
     continuer = True
@@ -144,6 +137,9 @@ def game(screen):
                         map[on_chest[0]] = new_line
                         dungeon[dungeon_pos] = map
                         on_chest = False
+                        vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen)
+                        if vnc["inventaire"] == False:
+                            return False
                         
                 if event.key == pygame.K_DOWN:
                     down = True                    
@@ -153,58 +149,91 @@ def game(screen):
                     right = True
                 if event.key == pygame.K_LEFT:
                     left = True
+            
+            # Gestion de l'inventaire -------------
+                if event.key == pygame.K_1:
+                   vnc = consommation_objet(0,vnc,objets)
+                   vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_2:
+                    vnc = consommation_objet(1,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_3:
+                    vnc = consommation_objet(2,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_4:
+                    vnc = consommation_objet(3,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_5:
+                    vnc = consommation_objet(4,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_6:
+                    vnc = consommation_objet(5,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_7:
+                    vnc = consommation_objet(6,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_8:
+                    vnc = consommation_objet(7,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+                if event.key == pygame.K_9:
+                    vnc = consommation_objet(8,vnc,objets)
+                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
+            
             #Cheats pour les vies -----------------------------------------------------
                 if event.key == pygame.K_KP_PLUS:
-                    vies=viechange(vies,vies_max,defense,1)
-                    vies_a_afficher=str(vies)+" / "+str(vies_max)
+                    vnc["vies"]=viechange(vnc["vies"],vnc["vies_max"],vnc["defense"],1)
+                    vies_a_afficher=str(vnc["vies"])+" / "+str(vnc["vies_max"])
                     vies_surf=berp_font.render(str(vies_a_afficher),1,(255,50,50))
                 if event.key == pygame.K_KP_MINUS:
-                    vies=viechange(vies,vies_max,defense,-1)
-                    vies_a_afficher=str(vies)+" / "+str(vies_max)
+                    vnc["vies"]=viechange(vnc["vies"],vnc["vies_max"],vnc["defense"],-1)
+                    vies_a_afficher=str(vnc["vies"])+" / "+str(vnc["vies_max"])
                     vies_surf=berp_font.render(str(vies_a_afficher),1,(255,50,50))
             #Cheats pour la defense --------------------------------------------------
                 if event.key == pygame.K_KP_MULTIPLY:
-                    defense+=1
-                    if defense<0:
-                        defense = 0
-                    if defense > 99:
-                        defense = 99
-                    defense_surf = berp_font.render(str(defense),1,(255,50,50))
-                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
+                    vnc["defense"]+=1
+                    if vnc["defense"]<0:
+                        vnc["defense"] = 0
+                    if vnc["defense"] > 99:
+                        vnc["defense"] = 99
+                    defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
                 if event.key == pygame.K_KP_DIVIDE:
-                    defense-=1
-                    if defense<0:
-                        defense = 0
-                    if defense > 99:
-                        defense = 99
-                    defense_surf = berp_font.render(str(defense),1,(255,50,50))
-                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
+                    vnc["defense"]-=1
+                    if vnc["defense"]<0:
+                        vnc["defense"] = 0
+                    if vnc["defense"] > 99:
+                        vnc["defense"] = 99
+                    defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
+                #Cheat inventaire ---------------------------------
+                if event.key == pygame.K_MINUS:
+                    vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen)
+                    if vnc["inventaire"] == False:
+                        return False
+
 
         #--------------------------------------------------------
 
                     
         if left :  #si fleche gauche enfoncee 
-            if test_collide((x_player-speed,y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
-                x_player -= speed
+            if test_collide((x_player-vnc["speed"],y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
+                x_player -= vnc["speed"]
         if right : #si fleche droite enfoncee 
-            if test_collide((x_player+speed,y_player),map, "DROITE",screen): #si le personnage ne collide pas avec un mur si il se deplace a droite
-                x_player += speed
+            if test_collide((x_player+vnc["speed"],y_player),map, "DROITE",screen): #si le personnage ne collide pas avec un mur si il se deplace a droite
+                x_player += vnc["speed"]
         if up:    #si fleche haut enfoncee 
-            if test_collide((x_player,y_player-speed),map, "HAUT",screen):   #si le personnage ne collide pas avec un mur si il se deplace en haut
-                y_player -= speed
+            if test_collide((x_player,y_player-vnc["speed"]),map, "HAUT",screen):   #si le personnage ne collide pas avec un mur si il se deplace en haut
+                y_player -= vnc["speed"]
         if down:  #si fleche bas enfoncee 
-            if test_collide((x_player,y_player+speed),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
-                y_player += speed
+            if test_collide((x_player,y_player+vnc["speed"]),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
+                y_player += vnc["speed"]
         
         #Ecran game over----------------------------
-        if vies < 1:
+        if vnc["vies"] < 1:
                 screen.fill((0,0,0))
                 mort_font = pygame.font.Font("fonts/optimus.ttf",64)
                 mort_titre = mort_font.render("YOU ARE DEAD...",1,(255,255,255))
                 mort_rect= (50,12,vies_surf.get_width(),vies_surf.get_height())                
                 screen.blit(mort_titre,mort_rect)
                 
-                quit_font = pygame.font.Font("fonts/title.ttf",20)
                 message_quit = mort_font.render("Press 'q' to restart",1,(255,255,255))
                 screen.blit(message_quit,(750,700))
                 
@@ -230,10 +259,15 @@ def game(screen):
         elif on_chest != False:
             chest_tip = tip_font.render("Press 'e' to open chest",1,(255,255,255))
             screen.blit(chest_tip,(19*taille_cases+30,20*taille_cases+12))
+
+        
+        affichage_inventaire(vnc["inventaire"],screen)
+
         screen.blit(vies_surf,vies_pos)
         screen.blit(heart,coeur_pos)
         screen.blit(shield_icon,shield_pos)
         screen.blit(defense_surf,defense_pos)
+        
         pygame.display.update()
 
 
