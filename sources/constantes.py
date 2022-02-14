@@ -17,6 +17,7 @@ marge_buttons_settings = 30
 tip_font = pygame.font.Font("fonts/optimus.ttf",36)
 brush_font = pygame.font.Font("fonts/brush.ttf",40)
 settings_buttons_font = pygame.font.Font("fonts/luna.ttf",20)
+berp_font= pygame.font.Font("fonts/berp.ttf",40)
 
 #correspondances entre les caracteres du fichier de la carte codifiée avec leur texture
 dict_textures = {
@@ -31,7 +32,7 @@ dict_textures = {
 }
 
 #autres textures 
-v = brush_font.render("1",1,(255,255,255))
+v = berp_font.render("1",1,(255,255,255))
 heart = pygame.transform.scale(pygame.image.load("textures/heart.png"),(v.get_height(),v.get_height()))
 settings_icon = pygame.transform.scale(pygame.image.load("textures/settings.png"),(size_icon_setting,size_icon_setting))
 shield_icon = pygame.transform.scale(pygame.image.load("textures/shield.png"),(v.get_height(),v.get_height()))
