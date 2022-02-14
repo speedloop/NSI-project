@@ -34,7 +34,7 @@ play_rect = pygame.rect.Rect((50,650,play.get_width(),play.get_height()))
 quit = font.render("QUIT",1,(250,250,250))
 quit_rect = pygame.rect.Rect((50,730,quit.get_width(),quit.get_height())) 
 
-font_title = pygame.font.Font("fonts/optimus.ttf",64)
+font_title = pygame.font.Font("fonts/title.ttf",64)
 title_surf = font_title.render("DOOMED SOULS",1,(255,255,255))
 
 settings_pos = (1300-(settings_icon.get_width()+10),10)
