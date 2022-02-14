@@ -18,6 +18,8 @@ Lien Trello permanant : https://trello.com/b/G91qzH56/projet-nsi
 Fleches dirrectionneles pour bouger.
 
 Q pour revenir au menu, en tout moment
+
+Touches 1-9 pour consommer un objet
   
   
   ##### Cheats:
@@ -29,6 +31,8 @@ Kpad moins pour retirer des vies
 Kpad diviser pour retirer de l'armure
 
 Kpad multiplier pour ajouter de l'armure
+
+Moins pour ajouter un objet dans l'inventaire
 
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
