@@ -2,10 +2,7 @@ import pygame
 
 
 pygame.font.init()
-
-
 #definition de constantes
-
 taille_cases = 37     
 hauteur_personnage = 30
 largeur_personnage = 29
@@ -37,6 +34,7 @@ dict_textures = {
 v = brush_font.render("1",1,(255,255,255))
 heart = pygame.transform.scale(pygame.image.load("textures/heart.png"),(v.get_height(),v.get_height()))
 settings_icon = pygame.transform.scale(pygame.image.load("textures/settings.png"),(size_icon_setting,size_icon_setting))
+shield_icon = pygame.transform.scale(pygame.image.load("textures/shield.png"),(v.get_height(),v.get_height()))
 
 #correspondances entre les caracteres du fichier du donjon codifié avec leur salle 
 dict_salles = {
