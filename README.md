@@ -26,6 +26,10 @@ Kpad plus pour ajouter des vies
 
 Kpad moins pour retirer des vies
 
+Kpad diviser pour retirer de l'armure
+
+Kpad multiplier pour ajouter de l'armure
+
 ## Projets existants ressemblants:
 Gameplay : https://store.steampowered.com/app/113200/The_Binding_of_Isaac/<br>
           https://gist.github.com/horstjens/f3b976fe2028193c2e569ab432c9465f<br>
