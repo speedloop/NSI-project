@@ -242,7 +242,7 @@ def game(screen):
                 while ecranmort == 0:
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
-                            return True
+                            return False
                         if event.type == pygame.KEYDOWN: 
                             if event.key == pygame.K_q:
                                 return True
