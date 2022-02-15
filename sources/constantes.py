@@ -6,7 +6,6 @@ pygame.font.init()
 taille_cases = 37     
 hauteur_personnage = 30
 largeur_personnage = 29
-speed = 5
 fps = 90
 
 size_icon_setting = 60
