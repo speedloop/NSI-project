@@ -24,32 +24,49 @@ icon_health_small = pygame.transform.scale(pygame.image.load("textures/health_sm
 icon_health_med = pygame.transform.scale(pygame.image.load("textures/health_med.png"),(taille_case_inventaire,taille_case_inventaire))
 icon_health_big = pygame.transform.scale(pygame.image.load("textures/health_big.png"),(taille_case_inventaire,taille_case_inventaire))
 
+
+# Ceci est un dictionnaire de listes. Dans ce dictionnaire sont regroupes tous les objets qu'un joueur peut collecter dans 
+# son inventaire. Chaque clef dans ce dictionnaire designe un objet. Cette clef est l'id de l'objet. Dans chaque liste, 
+# est contenu tout le necessaire sur un objet dans l'ordre: id, nom de l'objet affiche, description, texture.
+objets = {
+
+"..." : ["...","...","...",icon_inventaire_vide], #rien
+"health_small": ["health_small", "Small health potion", "A small health potion that restores 20 health", icon_health_small],    #petite potion de soin
+"health_med": ["health_med","Medium health potion","A medium health potion that restores 50 heath ", icon_health_med],          #potion de soin moyenne
+"health_big": ["health_big","Big health potion","A big health potion that restores 100 health", icon_health_big]                #grande potion de soin
+
+}
+
+
+
 def affichage_inventaire(inv,ecran):
     pygame.draw.rect(ecran,(255,255,255),(19*37+20,500, 1300-(19*37+24), 62),border_radius = 10)
     for i in range (9):
         rect_blit = (19*37+30+62*i,503)
         ecran.blit(inv[i][3],rect_blit)
 
-def ajout_objet_inv(inv,obj,ecran):
-    """Fonction qui prends en parametre l'inventaire, la liste de tous les objets et la surface de l'ecran et gere l'ajout 
+def ajout_objet_inv(inv,ecran):
+    """Fonction qui prends en parametre l'inventaire et la surface de l'ecran et gere l'ajout 
     d'un objet supplementaire dans l'inventaire, tire au sort automatiquement. Gere les surcharges d'inventaire aussi.
     retourne le nouvel inventaire"""
     
+    #tirage au sort d'un item 
     d100 = int(randint(0,99))
     if d100 < 75:
-        temp_slot = obj["health_small"]
+        temp_slot = objets["health_small"]
     elif d100 < 90:
-        temp_slot = obj["health_med"]
+        temp_slot = objets["health_med"]
     else:
-        temp_slot = obj["health_big"]
+        temp_slot = objets["health_big"]
     
     for i in range(9):
-        if inv[i] == obj["..."]:
+        if inv[i] == objets["..."]: #case d'inventaire vide
             inv[i] = temp_slot
-            temp_slot = obj["..."]
+            temp_slot = objets["..."]
             break
     
-    if temp_slot != obj["..."]:
+    if temp_slot != objets["..."]: #inventaire déjà plein
+        #affichage d'un écran pour sélectionner l'item à remplacer
         ecran.fill((0,0,0))
         annonce_font = pygame.font.Font("fonts/optimus.ttf",15)
         annonce_titre = annonce_font.render("Your inventory is overloaded, please choose what to leave behind with the number buttons. What will remain in the center will be destroyed. When finished press Enter",1,(255,255,255))
@@ -60,6 +77,7 @@ def ajout_objet_inv(inv,obj,ecran):
         ecran.blit(temp_slot[3],temp_rect)
 
         pygame.draw.rect(ecran,(255,255,255),(40,40, 1300-(19*37+24), 62),border_radius = 10)
+        #affichage des icones de chaque item de l'inventaire
         for i in range (9):
             rect_blit = (46+62*i,43)
             ecran.blit(inv[i][3],rect_blit)
@@ -77,20 +95,20 @@ def ajout_objet_inv(inv,obj,ecran):
                         if event.key == pygame.K_RETURN:
                             ecran_changement_inventaire = 1
                         if event.key == pygame.K_q:
-                                ecran_changement_inventaire = 1
-                                break
+                            ecran_changement_inventaire = 1
+                            break
                         if event.key == pygame.K_1:
-                                emergency_transition_slot = inv[0]
-                                inv[0]= temp_slot
-                                temp_slot = emergency_transition_slot
+                            emergency_transition_slot = inv[0]
+                            inv[0]= temp_slot
+                            temp_slot = emergency_transition_slot
                         if event.key == pygame.K_2:
-                                emergency_transition_slot = inv[1]
-                                inv[1]= temp_slot
-                                temp_slot = emergency_transition_slot
+                            emergency_transition_slot = inv[1]
+                            inv[1]= temp_slot
+                            temp_slot = emergency_transition_slot
                         if event.key == pygame.K_3:
-                                emergency_transition_slot = inv[2]
-                                inv[2]= temp_slot
-                                temp_slot = emergency_transition_slot
+                            emergency_transition_slot = inv[2]
+                            inv[2]= temp_slot
+                            temp_slot = emergency_transition_slot
                         if event.key == pygame.K_4:
                                 emergency_transition_slot = inv[3]
                                 inv[3]= temp_slot
@@ -118,8 +136,8 @@ def ajout_objet_inv(inv,obj,ecran):
 
                         pygame.draw.rect(ecran,(255,255,255),(40,40, 1300-(19*37+24), 62),border_radius = 10)
                         for i in range (9):
-                            rect_blit = (46+62*i,43)
-                            ecran.blit(inv[i][3],rect_blit)
+                            icon_blit = (46+62*i,43)
+                            ecran.blit(inv[i][3],icon_blit)
                         pygame.draw.rect(ecran,(255,0,0),(180,130,96,76),border_radius = 10)
                         temp_rect = (200,140)
                         ecran.blit(temp_slot[3],temp_rect)
@@ -141,14 +159,3 @@ def consommation_objet(place_inv, vnc_func,obj):
 
 
 
-# Ceci est un dictionnaire de listes. Dans ce dictionnaire sont regroupes tous les objets qu'un joueur peut collecter dans 
-# son inventaire. Chaque clef dans ce dictionnaire designe un objet. Cette clef est l'id de l'objet. Dans chaque liste, 
-# est contenu tout le necessaire sur un objet dans l'ordre: id, nom de l'objet affiche, description, texture.
-objets = {
-
-"..." : ["...","...","...",icon_inventaire_vide],
-"health_small": ["health_small", "Small health potion", "A small health potion that restores 25 health", icon_health_small],
-"health_med": ["health_med","Medium health potion","A medium health potion that restores 50 heath ", icon_health_med],
-"health_big": ["health_big","Big health potion","A big health potion that restores 100 health", icon_health_big]
-
-}

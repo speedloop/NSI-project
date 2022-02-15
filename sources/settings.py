@@ -1,4 +1,5 @@
 import pygame
+from sources.change_char import change_char
 from sources.constantes import *
 
 def settings(screen):
@@ -27,6 +28,10 @@ def settings(screen):
                     change_char_selected = True
                 else: change_char_selected = False
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if change_char_selected:
+                    continuer = change_char(screen)
+
 
         screen.fill((80,80,80))
 
@@ -39,4 +44,4 @@ def settings(screen):
             change_char_surf = settings_buttons_font.render("Change Character",1,(255,255,255))
         screen.blit(change_char_surf,pos_text)
 
-        pygame.display.update()
+        pygame.display.update()    

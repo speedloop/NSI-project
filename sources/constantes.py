@@ -1,4 +1,4 @@
-import pygame
+import pygame,os
 
 
 pygame.font.init()
@@ -6,11 +6,18 @@ pygame.font.init()
 taille_cases = 37     
 hauteur_personnage = 30
 largeur_personnage = 29
+speed = 5
 fps = 90
 
 size_icon_setting = 60
 marge_buttons_settings = 30
 
+#definition de la taille d'une case de séléction de personnage (voir change_char.py) en fonction du nombre de personnages possibles
+characters_img = os.listdir(os.getcwd()+'/characters')
+nb_personnages = len(characters_img)
+inter_pic = 7 #distance ente les photos des personnages
+height_pic = 800-20 // (nb_personnages/2) - inter_pic
+width_pic = 1300/2 - 30
 
 #definition de fonts
 tip_font = pygame.font.Font("fonts/optimus.ttf",36)
@@ -61,6 +68,7 @@ dict_salles = {
 mob_surf = pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37))
 
 def constantes():
+    global speed
     global taille_cases
     global hauteur_personnage
     global largeur_personnage

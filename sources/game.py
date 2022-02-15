@@ -137,7 +137,7 @@ def game(screen):
                         map[on_chest[0]] = new_line
                         dungeon[dungeon_pos] = map
                         on_chest = False
-                        vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen)
+                        vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen) #variable objets dans objets.py
                         if vnc["inventaire"] == False:
                             return False
                         
