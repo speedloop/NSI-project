@@ -52,7 +52,7 @@ def display_room(screen,map_room):
 pygame.font.init()
 
 
-def game(screen):
+def game(screen,player):
     '''Fonction pricipale du jeu actif'''
     clock = pygame.time.Clock()
     
@@ -74,7 +74,6 @@ def game(screen):
  #-----------------------------------------------------------------------
 
     x_player,y_player = get_player_initial_pos(map)    
-    player = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(largeur_personnage,hauteur_personnage))
 
     up,down,right,left = False,False,False,False
     

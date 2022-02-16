@@ -3,6 +3,9 @@ from sources.change_char import change_char
 from sources.constantes import *
 
 def settings(screen):
+    new_character = False 
+
+
     screen.fill((80,80,80))    
 
     change_char_rect = pygame.draw.rect(screen, (0,0,0),(marge_buttons_settings,2*marge_buttons_settings,1300/2 - 2*marge_buttons_settings,60),border_radius=15)
@@ -21,7 +24,8 @@ def settings(screen):
             if event.type == pygame.QUIT:
                 return False
             if event.type == pygame.KEYDOWN:
-                return True
+                if event.key == pygame.K_q:
+                    return pygame.transform.scale(new_character,(largeur_personnage,hauteur_personnage))
 
             if event.type == pygame.MOUSEMOTION:
                 if change_char_rect.collidepoint(pygame.mouse.get_pos()): #souris sur bouton changement de personnage
@@ -30,7 +34,8 @@ def settings(screen):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if change_char_selected:
-                    continuer = change_char(screen)
+                    new_character = change_char(screen)
+                    if new_character == False: continuer = False
 
 
         screen.fill((80,80,80))

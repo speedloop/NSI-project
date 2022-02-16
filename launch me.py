@@ -42,6 +42,8 @@ settings_rect = pygame.rect.Rect(settings_pos + (settings_icon.get_width(),setti
 
 #--------------------------------------
 
+character_texture = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(largeur_personnage,hauteur_personnage))
+
 quit_selected = False
 play_selected = False
 settings_selected = False
@@ -82,9 +84,12 @@ while continuer:
             if quit_selected:
                 continuer = False
             if play_selected:
-                continuer = game(ecran)
+                continuer = game(ecran,character_texture)
             if settings_selected:
-                continuer = settings(ecran)
+                changes = settings(ecran)
+                if changes == False: continuer = False
+                else:
+                    character_texture = changes
                 
     #affichage du menu 
     ecran.fill((80,80,80))
