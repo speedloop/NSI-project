@@ -81,15 +81,16 @@ while continuer:
             
         #Execution des actions lors de la pression d'un des bouttons
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if quit_selected:
-                continuer = False
-            if play_selected:
-                continuer = game(ecran,character_texture)
-            if settings_selected:
-                changes = settings(ecran)
-                if changes == False: continuer = False
-                else:
-                    character_texture = changes
+            if pygame.mouse.get_pressed()[0]: #seulement le click gauche
+                if quit_selected:
+                    continuer = False
+                if play_selected:
+                    continuer = game(ecran,character_texture)
+                if settings_selected:
+                    changes = settings(ecran)
+                    if changes == False: continuer = False
+                    else:
+                        character_texture = changes
                 
     #affichage du menu 
     ecran.fill((80,80,80))
