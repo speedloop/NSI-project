@@ -6,6 +6,7 @@ pygame.font.init()
 taille_cases = 37     
 hauteur_personnage = 30
 largeur_personnage = 29
+speed = 5
 fps = 90
 
 size_icon_setting = 60
@@ -14,9 +15,10 @@ marge_buttons_settings = 30
 #definition de la taille d'une case de séléction de personnage (voir change_char.py) en fonction du nombre de personnages possibles
 characters_img = os.listdir(os.getcwd()+'/characters')
 nb_personnages = len(characters_img)
-inter_pic = 7 #distance ente les photos des personnages
-height_pic = 800-20 // (nb_personnages/2) - inter_pic
-width_pic = 1300/2 - 30
+inter_pic = 12 #distance ente les photos des personnages
+marge = 20
+height_pic = ((800-marge) // (nb_personnages/2)) - inter_pic
+width_pic = (1300/2) - (1.5*marge)
 
 #definition de fonts
 tip_font = pygame.font.Font("fonts/optimus.ttf",36)

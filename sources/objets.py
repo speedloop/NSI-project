@@ -49,7 +49,7 @@ def ajout_objet_inv(inv,ecran):
     """Fonction qui prends en parametre l'inventaire et la surface de l'ecran et gere l'ajout 
     d'un objet supplementaire dans l'inventaire, tire au sort automatiquement. Gere les surcharges d'inventaire aussi.
     retourne le nouvel inventaire"""
-    
+
     #tirage au sort d'un item 
     d100 = int(randint(0,99))
     if d100 < 75:
@@ -145,7 +145,7 @@ def ajout_objet_inv(inv,ecran):
                         
     return (inv)
 
-def consommation_objet(place_inv, vnc_func,obj):
+def consommation_objet(place_inv, vnc_func):
     objet_consomme = vnc_func["inventaire"][place_inv][0]
     if objet_consomme == "health_small": 
         vnc_func["vies"] = viechange(vnc_func["vies"],vnc_func["vies_max"],vnc_func["defense"],20)
@@ -153,7 +153,7 @@ def consommation_objet(place_inv, vnc_func,obj):
         vnc_func["vies"] = viechange(vnc_func["vies"],vnc_func["vies_max"],vnc_func["defense"],50)
     if objet_consomme == "health_big":
         vnc_func["vies"] = viechange(vnc_func["vies"],vnc_func["vies_max"],vnc_func["defense"],100)
-    vnc_func["inventaire"][place_inv] = obj["..."]
+    vnc_func["inventaire"][place_inv] = objets["..."]
     return (vnc_func)
 
 

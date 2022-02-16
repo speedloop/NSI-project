@@ -80,7 +80,7 @@ def game(screen):
     
     #Creation des variables non constantes, utilise dans les systemes de vie et d'inventaire
     vnc = {
-    "vies" : 100, "vies_max": 100, "defense" : 0, "speed": 5, "inventaire" : [objets["..."]]*9
+    "vies" : 100, "vies_max": 100, "defense" : 0, "speed": 5, "inventaire" : [objets["..."]]*9  #inventaire rempli par neuf items "vide"...
     }
     #Affichage des vies initial-----
     
@@ -91,8 +91,7 @@ def game(screen):
     coeur_pos = (20*taille_cases + vies_surf_pour_calcs.get_width(),12)
     defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
     defense_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + 200,12)
-    defense_surface_pour_calcs =berp_font.render(("888"),1,(255,50,50))
-    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surface_pour_calcs.get_width() + 207,8)
+    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
      
     #-------------------------------------------------------
 
@@ -137,8 +136,8 @@ def game(screen):
                         map[on_chest[0]] = new_line
                         dungeon[dungeon_pos] = map
                         on_chest = False
-                        vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen) #variable objets dans objets.py
-                        if vnc["inventaire"] == False:
+                        vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],screen) #variable objets dans objets.py
+                        if vnc["inventaire"] == False: #au cas où on appuie sur la croix dans ajout_objet_inv()
                             return False
                         
                 if event.key == pygame.K_DOWN:
@@ -152,31 +151,31 @@ def game(screen):
             
             # Gestion de l'inventaire -------------
                 if event.key == pygame.K_1:
-                   vnc = consommation_objet(0,vnc,objets)
+                   vnc = consommation_objet(0,vnc)
                    vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_2:
-                    vnc = consommation_objet(1,vnc,objets)
+                    vnc = consommation_objet(1,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_3:
-                    vnc = consommation_objet(2,vnc,objets)
+                    vnc = consommation_objet(2,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_4:
-                    vnc = consommation_objet(3,vnc,objets)
+                    vnc = consommation_objet(3,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_5:
-                    vnc = consommation_objet(4,vnc,objets)
+                    vnc = consommation_objet(4,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_6:
-                    vnc = consommation_objet(5,vnc,objets)
+                    vnc = consommation_objet(5,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_7:
-                    vnc = consommation_objet(6,vnc,objets)
+                    vnc = consommation_objet(6,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_8:
-                    vnc = consommation_objet(7,vnc,objets)
+                    vnc = consommation_objet(7,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
                 if event.key == pygame.K_9:
-                    vnc = consommation_objet(8,vnc,objets)
+                    vnc = consommation_objet(8,vnc)
                     vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
             
             #Cheats pour les vies -----------------------------------------------------
@@ -196,6 +195,7 @@ def game(screen):
                     if vnc["defense"] > 99:
                         vnc["defense"] = 99
                     defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
+                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
                 if event.key == pygame.K_KP_DIVIDE:
                     vnc["defense"]-=1
                     if vnc["defense"]<0:
@@ -203,9 +203,11 @@ def game(screen):
                     if vnc["defense"] > 99:
                         vnc["defense"] = 99
                     defense_surf = berp_font.render(str(vnc["defense"]),1,(255,50,50))
+                    shield_pos = (20*taille_cases + vies_surf_pour_calcs.get_width() + heart.get_width() + defense_surf.get_width() + 207,8)
                 #Cheat inventaire ---------------------------------
                 if event.key == pygame.K_MINUS:
-                    vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],objets,screen)
+                    print("minus")
+                    vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],screen)
                     if vnc["inventaire"] == False:
                         return False
 
