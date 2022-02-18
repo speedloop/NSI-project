@@ -16,10 +16,17 @@ def get_walls_rect(map):
     
 
 
-def test_collide(player_pos,map,direction,screen):
+def test_collide(player_pos,map,direction):
     """retourne True si le personnage peut avancer sans foncer dans un mur, sinon, retourne False, boolean"""
        
-    player_rect = pygame.rect.Rect(player_pos+(largeur_personnage,hauteur_personnage))   #definition d'une zone autour du personnage
+    
+    
+    min_x = player_pos[0] + largeur_epee    
+    min_y = player_pos[1]    
+    max_x = min_x + largeur_personnage_sans_epee
+    max_y = min_y + hauteur_personnage
+
+    player_rect = pygame.rect.Rect((min_x,min_y,largeur_personnage_sans_epee,hauteur_personnage))   #definition d'une zone autour du personnage
     
     walls_rect = get_walls_rect(map)   #obtenir tous les rects (x,y,largeur,hauteur) des murs de la map
     
@@ -27,12 +34,7 @@ def test_collide(player_pos,map,direction,screen):
         #on parcours chaque rect de chaque mur
         if player_rect.colliderect(wall):  #si le personnage est en contact avec l'un d'entre eux :
             return False    #alors il ne peut pas avancer
-    
-    min_x  = player_pos[0]
-    min_y = player_pos[1]
-    max_x = min_x + largeur_personnage
-    max_y = min_y + hauteur_personnage
-    
+
     if max_x > 19*taille_cases+10: #le personnage va sortir de la map côté est
         return False
     if max_y > 21*taille_cases+12: #le personnage va sortir de la map côté sud

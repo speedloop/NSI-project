@@ -94,11 +94,20 @@ def game(screen,player):
      
     #-------------------------------------------------------
 
+    player_textures = {
+        "DROITE":player,
+        "GAUCHE":pygame.transform.flip(player,True,False)
+    }
+    direction = "DROITE"
+
+    x_sword,y_sword = x_player + 3*(largeur_personnage//8),y_player+hauteur_personnage//1.5
+
     #Partie principale du jeu qui tourne en permanence:
     continuer = True
     on_chest = False
     while continuer:
-        clock.tick(fps)
+        clock.tick(20)
+        print(clock.get_fps())
         exits = detect_exit(map,(x_player,y_player))
         on_chest = player_on_chest(dungeon[dungeon_pos],(x_player,y_player))
                             
@@ -139,13 +148,15 @@ def game(screen,player):
                         if vnc["inventaire"] == False: #au cas où on appuie sur la croix dans ajout_objet_inv()
                             return False
                         
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN:                    
                     down = True                    
                 if event.key == pygame.K_UP:
                     up = True
                 if event.key == pygame.K_RIGHT:
+                    direction = "DROITE"
                     right = True
                 if event.key == pygame.K_LEFT:
+                    direction = "GAUCHE"
                     left = True
             
             # Gestion de l'inventaire -------------
@@ -215,17 +226,21 @@ def game(screen,player):
 
                     
         if left :  #si fleche gauche enfoncee 
-            if test_collide((x_player-vnc["speed"],y_player), map,"GAUCHE",screen):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
+            if test_collide((x_player-vnc["speed"],y_player), map,direction):  #si le personnage ne collide pas avec un mur si il se deplace a gauche
                 x_player -= vnc["speed"]
+                x_sword -= vnc["speed"]
         if right : #si fleche droite enfoncee 
-            if test_collide((x_player+vnc["speed"],y_player),map, "DROITE",screen): #si le personnage ne collide pas avec un mur si il se deplace a droite
+            if test_collide((x_player+vnc["speed"],y_player),map, direction): #si le personnage ne collide pas avec un mur si il se deplace a droite
                 x_player += vnc["speed"]
+                x_sword += vnc["speed"]
         if up:    #si fleche haut enfoncee 
-            if test_collide((x_player,y_player-vnc["speed"]),map, "HAUT",screen):   #si le personnage ne collide pas avec un mur si il se deplace en haut
+            if test_collide((x_player,y_player-vnc["speed"]),map, direction):   #si le personnage ne collide pas avec un mur si il se deplace en haut
                 y_player -= vnc["speed"]
+                y_sword -= vnc["speed"]
         if down:  #si fleche bas enfoncee 
-            if test_collide((x_player,y_player+vnc["speed"]),map, "BAS",screen):    #si le personnage ne collide pas avec un mur si il se deplace en bas
+            if test_collide((x_player,y_player+vnc["speed"]),map, direction):    #si le personnage ne collide pas avec un mur si il se deplace en bas
                 y_player += vnc["speed"]
+                y_sword += vnc["speed"]
         
         #Ecran game over----------------------------
         if vnc["vies"] < 1:
@@ -251,7 +266,9 @@ def game(screen,player):
             
         
         display_room(screen,map)
-        screen.blit(player,(x_player,y_player))
+        
+        screen.blit(player_textures[direction],(x_player,y_player))        
+        #screen.blit(sword_surf,(x_sword,y_sword))
         pygame.draw.rect(screen,(0,0,0),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)))
         pygame.draw.rect(screen,(255,255,255),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)),1,border_radius = 40)
         if True in exits: #le personnage est sur une sortie

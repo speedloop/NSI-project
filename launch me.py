@@ -41,8 +41,8 @@ settings_pos = (1300-(settings_icon.get_width()+10),10)
 settings_rect = pygame.rect.Rect(settings_pos + (settings_icon.get_width(),settings_icon.get_height()))
 
 #--------------------------------------
-
-character_texture = pygame.transform.scale(pygame.image.load("characters/spartan.png"),(largeur_personnage,hauteur_personnage))
+#texture du personnage par défaut
+character_texture = pygame.transform.scale(pygame.image.load("equiped_characters/spartan.png"),(largeur_personnage,hauteur_personnage))
 
 quit_selected = False
 play_selected = False
@@ -100,6 +100,7 @@ while continuer:
         pygame.draw.rect(ecran,(0,0,0),(45,655,play.get_width()+15,60),border_radius=5)
     if settings_selected:
         pygame.draw.rect(ecran,(0,0,0),(settings_pos[0]-5,settings_pos[1]-5,settings_icon.get_width()+10,settings_icon.get_height()+10),border_radius = 5)
+    
     display_screen(ecran, [play,quit,title_surf,settings_icon],[(50,650),(50,730),(ecran.get_width()/2-title_surf.get_width()/2,100),settings_pos])    
             
 pygame.quit()

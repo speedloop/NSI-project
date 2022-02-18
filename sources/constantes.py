@@ -3,10 +3,12 @@ import pygame,os
 
 pygame.font.init()
 #definition de constantes
-taille_cases = 37     
+taille_cases = 37   
 hauteur_personnage = 30
-largeur_personnage = 29
-speed = 5
+largeur_personnage = 52
+largeur_epee = 11
+largeur_personnage_sans_epee = largeur_personnage - (2*largeur_epee)
+
 fps = 90
 
 size_icon_setting = 60
@@ -17,8 +19,8 @@ characters_img = os.listdir(os.getcwd()+'/characters')
 nb_personnages = len(characters_img)
 inter_pic = 12 #distance ente les photos des personnages
 marge = 20
-height_pic = ((800-marge) // (nb_personnages/2)) - inter_pic
-width_pic = (1300/2) - (1.5*marge)
+height_pic = ((800-marge) // (nb_personnages//3)) - inter_pic
+width_pic = (1300/3) - (1.5*marge)
 
 #definition de fonts
 settings_done_button_font = pygame.font.Font("fonts/blantic.ttf",30)
