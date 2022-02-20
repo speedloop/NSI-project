@@ -20,7 +20,7 @@ def change_char(screen):
             
             if pygame.mouse.get_pressed()[0]: #seulement le click gauche
                 if collide_case != False:
-                    return pygame.image.load("equiped_characters/"+characters_img[collide_case-1])
+                    return characters_img[collide_case-1][:-4] #retourne le nom du fichier contenant l'image cliquée, sans son extension
                 
 
         screen.fill((80,80,80))

@@ -4,12 +4,17 @@ import pygame,os
 pygame.font.init()
 #definition de constantes
 taille_cases = 37   
-hauteur_personnage = 30
-largeur_personnage = 52
-largeur_epee = 11
-largeur_personnage_sans_epee = largeur_personnage - (2*largeur_epee)
 
-fps = 90
+hauteur_personnage = 34
+largeur_personnage = 60
+largeur_personnage_sans_epee = 30
+hauteur_personnage_sans_epee = 29
+
+taille_case_inventaire = 56
+icon_inventaire_vide = pygame.transform.scale(pygame.image.load("textures/inventaire_vide.png"),(taille_case_inventaire,taille_case_inventaire))
+icon_health_small = pygame.transform.scale(pygame.image.load("textures/health_small.png"),(taille_case_inventaire,taille_case_inventaire))
+icon_health_med = pygame.transform.scale(pygame.image.load("textures/health_med.png"),(taille_case_inventaire,taille_case_inventaire))
+icon_health_big = pygame.transform.scale(pygame.image.load("textures/health_big.png"),(taille_case_inventaire,taille_case_inventaire))
 
 size_icon_setting = 60
 marge_buttons_settings = 30

@@ -1,5 +1,6 @@
 from random import randint
 import pygame
+from sources.constantes import *
 
 # Dans ce fichier sont geres tous les objets qu'on peut retrouver dans le jeux. puis ce fichier est importe dans le game.py pour
 # toutes les manipulations avec l'inventaire. Les vies sont egalement geres ici.
@@ -18,11 +19,7 @@ def viechange(v,vmax,prot,vchange):
     return(v)
 
 
-taille_case_inventaire = 56
-icon_inventaire_vide = pygame.transform.scale(pygame.image.load("textures/inventaire_vide.png"),(taille_case_inventaire,taille_case_inventaire))
-icon_health_small = pygame.transform.scale(pygame.image.load("textures/health_small.png"),(taille_case_inventaire,taille_case_inventaire))
-icon_health_med = pygame.transform.scale(pygame.image.load("textures/health_med.png"),(taille_case_inventaire,taille_case_inventaire))
-icon_health_big = pygame.transform.scale(pygame.image.load("textures/health_big.png"),(taille_case_inventaire,taille_case_inventaire))
+
 
 
 # Ceci est un dictionnaire de listes. Dans ce dictionnaire sont regroupes tous les objets qu'un joueur peut collecter dans 
@@ -68,7 +65,7 @@ def ajout_objet_inv(inv,ecran):
     if temp_slot != objets["..."]: #inventaire déjà plein
         #affichage d'un écran pour sélectionner l'item à remplacer
         ecran.fill((0,0,0))
-        annonce_font = pygame.font.Font("fonts/optimus.ttf",15)
+        annonce_font = tip_font
         annonce_titre = annonce_font.render("Your inventory is overloaded, please choose what to leave behind with the number buttons. What will remain in the center will be destroyed. When finished press Enter",1,(255,255,255))
         annonce_rect= (50,12,annonce_titre.get_width(),annonce_titre.get_height())                
         ecran.blit(annonce_titre,annonce_rect)

@@ -63,7 +63,7 @@ def settings(screen):
                 return False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
-                    return pygame.transform.scale(new_character,(largeur_personnage,hauteur_personnage))
+                    return new_character
 
             if event.type == pygame.MOUSEMOTION:
                 if change_char_rect.collidepoint(pygame.mouse.get_pos()): #souris sur bouton changement de personnage
@@ -82,9 +82,9 @@ def settings(screen):
                         new_character = change_char(screen)
                         if new_character == False: return False
                     if random_char_selected:
-                        new_character = pygame.image.load("characters/"+characters_img[random.randint(0,nb_personnages-1)])
+                        new_character = characters_img[random.randint(0,nb_personnages-1)][-4] #new_character prend la valeur du nom du fichier contenant l'image du personnage choisie au hasard, sans son extension
                     if done_button_selected:
-                        return pygame.transform.scale(new_character,(largeur_personnage,hauteur_personnage))
+                        return new_character
 
 
         
