@@ -31,8 +31,8 @@ clock = pygame.time.Clock()
 font = pygame.font.Font("fonts/bouton.ttf",60)
 play = font.render("PLAY", 1,(250,250,250))
 play_rect = pygame.rect.Rect((50,650,play.get_width(),play.get_height()))
-quit = font.render("QUIT",1,(250,250,250))
-quit_rect = pygame.rect.Rect((50,730,quit.get_width(),quit.get_height())) 
+quit_button = font.render("QUIT",1,(250,250,250))
+quit_rect = pygame.rect.Rect((50,730,quit_button.get_width(),quit_button.get_height())) 
 
 font_title = pygame.font.Font("fonts/optimus.ttf",64)
 title_surf = font_title.render("DOOMED SOULS",1,(255,255,255))
@@ -95,12 +95,12 @@ while continuer:
     #affichage du menu 
     ecran.fill((80,80,80))
     if quit_selected:   #affichage d'un "rectangle de sélection" autour du bouton quit si la souris est dessus
-        pygame.draw.rect(ecran,(0,0,0),(45,735,quit.get_width()+15,60),border_radius=5) 
+        pygame.draw.rect(ecran,(0,0,0),(45,735,quit_button.get_width()+15,60),border_radius=5) 
     if play_selected:   #affichage d'un "rectangle de sélection" autour du bouton play si la souris est dessus
         pygame.draw.rect(ecran,(0,0,0),(45,655,play.get_width()+15,60),border_radius=5)
     if settings_selected:
         pygame.draw.rect(ecran,(0,0,0),(settings_pos[0]-5,settings_pos[1]-5,settings_icon.get_width()+10,settings_icon.get_height()+10),border_radius = 5)
     
-    display_screen(ecran, [play,quit,title_surf,settings_icon],[(50,650),(50,730),(ecran.get_width()/2-title_surf.get_width()/2,100),settings_pos])    
+    display_screen(ecran, [play,quit_button,title_surf,settings_icon],[(50,650),(50,730),(ecran.get_width()/2-title_surf.get_width()/2,100),settings_pos])    
             
 pygame.quit()

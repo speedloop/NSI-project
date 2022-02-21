@@ -37,9 +37,10 @@ def get_nb_dungeon_maps():
     return nb_maps
 
 
-def display_room(screen,map_room):
+def create_room(screen,map_room):
     """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
     screen.fill((0,0,0))
+    mobs = []
 
     for i in range(len(map_room)):
         for j in range(len(map_room[i])):
@@ -47,7 +48,18 @@ def display_room(screen,map_room):
             
             if map_room[i][j] == '!': #c'est un mob
                 pos_mob = (taille_cases*j+10,taille_cases*i+12)
-                screen.blit(mob_surf, pos_mob)
+                mobs.append(Mob("snowman",pos_mob[0],pos_mob[1]))
+    
+    return mobs
+    
+def display_room(screen,map_room):
+    """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
+    screen.fill((0,0,0))
+    mobs = []
+
+    for i in range(len(map_room)):
+        for j in range(len(map_room[i])):
+            screen.blit(dict_textures[map_room[i][j]], (taille_cases*j+10,taille_cases*i+12))
 
 
 class Player:
@@ -56,7 +68,9 @@ class Player:
         self.initial_surf = surf
         self.current_frame = self.initial_surf
         self.right_surf = self.initial_surf #surface du personnage quand il se deplace vers la droite
-        self.left_surf = pygame.transform.flip(self.initial_surf,True,False)  #surface du personnage quand il se deplace vers la droite
+        self.left_surf = pygame.image.load("equiped_characters/"+id+"/GAUCHE.png")
+        self.top_surf = pygame.image.load("equiped_characters/"+id+"/HAUT.png")
+        self.low_surf = pygame.image.load("equiped_characters/"+id+"/BAS.png")
 
         self.direction = "DROITE"
         self.x = pos_x
@@ -74,7 +88,6 @@ class Player:
         self.attack_frames["GAUCHE"].append(pygame.transform.flip(pygame.image.load("animations/attack "+id+"/1.png"),True,False)) #frame 2 importation
         self.attack_frames["GAUCHE"].append(pygame.transform.flip(pygame.image.load("animations/attack "+id+"/2.png"),True,False)) #frame 3 importation 
         self.attack_frames["GAUCHE"].append(pygame.transform.flip(pygame.image.load("animations/attack "+id+"/3.png"),True,False)) #frame 4 importation
-        print(self.attack_frames)
         self.attack = False
         self.attack_frame = 0
         self.width = self.initial_surf.get_width()
@@ -85,9 +98,13 @@ class Player:
         if direction == "DROITE":
             self.current_frame = self.right_surf
             self.direction = "DROITE"
-        else:
+        elif direction == "GAUCHE":
             self.current_frame = self.left_surf
             self.direction = "GAUCHE"
+        elif direction == "HAUT":
+            self.current_frame = self.top_surf
+        else:
+            self.current_frame = self.low_surf
 
     def update_pos(self,new_x,new_y):
         self.x = new_x
@@ -99,10 +116,34 @@ class Player:
     def update_attack(self):
         if self.attack == True:
             self.current_frame = self.attack_frames[self.direction][int(self.attack_frame)]
-            self.attack_frame += 0.5
+            self.attack_frame += 0.3
             if int(self.attack_frame) == len(self.attack_frames[self.direction]): #dernière frame deja utilisée
                 self.attack_frame = 0
                 self.attack = False
+                
+class Mob:
+    def __init__(self,id,pos_x,pos_y):
+        self.initial_surf = pygame.image.load("mobs/"+id+".png")
+        self.current_frame = self.initial_surf
+        self.right_surf = self.initial_surf
+        self.left_surf = pygame.transform.flip(self.initial_surf,True,False)
+        
+        self.x = pos_x
+        self.y = pos_y
+        
+        self.direction = "DROITE"
+        
+    def update_pos(self,new_x,new_y):
+        self.x = new_x
+        self.y = new_y
+        
+    def turn(self,direction):
+        if direction == "DROITE":
+            self.current_frame = self.right_surf
+            self.direction = "DROITE"
+        else:
+            self.current_frame = self.left_surf
+            self.direction = "GAUCHE"
 
 pygame.font.init()
 
@@ -126,11 +167,13 @@ def game(screen,player_id):
  #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
+    mobs = create_room(screen,map)
+    print(mobs)
  #-----------------------------------------------------------------------
     room_surface = pygame.draw.rect(screen,(0,0,0),(10,12,19*taille_cases,21*taille_cases))
 
     x_player,y_player = get_player_initial_pos(map)    
-    player = Player(pygame.image.load("equiped_characters/"+player_id+".png"),x_player,y_player,player_id)
+    player = Player(pygame.image.load("equiped_characters/"+player_id+"/DROITE.png"),x_player,y_player,player_id)
 
     up,down,right,left = False,False,False,False
     
@@ -156,10 +199,16 @@ def game(screen,player_id):
     continuer = True
     on_chest = False
     while continuer:
-        clock.tick(20)
-        print(clock.get_fps())
+        clock.tick(30)
         exits = detect_exit(map,(player.x,player.y))
         on_chest = player_on_chest(dungeon[dungeon_pos],(player.x,player.y))
+        
+        
+        ######################
+        #---Pathfiding mob---#
+        ######################
+        
+        
                             
         #Gestions des touches en jeu----------------------
         for event in pygame.event.get():
@@ -182,6 +231,10 @@ def game(screen,player_id):
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_a: #lancement attaque joueur
                     player.start_attack()
+                if event.key == pygame.K_l:
+                    snowman.turn("GAUCHE")
+                if event.key == pygame.K_r:
+                    snowman.turn("DROITE")
                 if event.key == pygame.K_SPACE:
                     if True in exits: #le personnage se trouve sur une des sorties
                         dungeon_pos,pos_player = change_room(dungeon,dungeon_pos,(player.x,player.y),exits)
@@ -200,9 +253,11 @@ def game(screen,player_id):
                             return False
                         
                 if event.key == pygame.K_DOWN:                    
-                    down = True                    
+                    down = True 
+                    player.turn("BAS")                   
                 if event.key == pygame.K_UP:
                     up = True
+                    player.turn("HAUT")
                 if event.key == pygame.K_RIGHT:
                     player.turn("DROITE")
                     right = True
@@ -297,6 +352,10 @@ def game(screen,player_id):
                             if event.key == pygame.K_q:
                                 return True
         #-----------------------------------------
+        if right and not left:
+            player.turn("DROITE")
+        elif left and not right:
+            player.turn("GAUCHE")
             
         
         display_room(screen,map)

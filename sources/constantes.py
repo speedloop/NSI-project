@@ -28,7 +28,7 @@ height_pic = ((800-marge) // (nb_personnages//3)) - inter_pic
 width_pic = (1300/3) - (1.5*marge)
 
 #definition de fonts
-settings_done_button_font = pygame.font.Font("fonts/blantic.ttf",30)
+settings_done_button_font = pygame.font.Font("fonts/blantic.otf",30)
 tip_font = pygame.font.Font("fonts/optimus.ttf",36)
 brush_font = pygame.font.Font("fonts/brush.ttf",40)
 settings_buttons_font = pygame.font.Font("fonts/luna.ttf",20)
