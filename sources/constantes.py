@@ -76,9 +76,4 @@ dict_salles = {
 #definition de la surface du bonhomme de neige
 mob_surf = pygame.transform.scale(pygame.image.load("mobs/snowman.png"),(32,37))
 
-def constantes():
-    global speed
-    global taille_cases
-    global hauteur_personnage
-    global largeur_personnage
-    global mob_surf
+

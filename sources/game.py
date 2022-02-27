@@ -1,6 +1,9 @@
-import pygame,os,random,time
 
-from sources.collide import test_collide
+import pygame,os,random,time
+from queue import PriorityQueue
+from math import sqrt
+
+from sources.collide import test_collide,get_walls_rect
 from sources.detect_exit import detect_exit
 from sources.change_room import change_room
 from sources.chests import player_on_chest
@@ -37,29 +40,55 @@ def get_nb_dungeon_maps():
     return nb_maps
 
 
-def create_room(screen,map_room):
+def create_room(room,map_room):
     """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
-    screen.fill((0,0,0))
+    room.fill((0,0,0))
     mobs = []
 
     for i in range(len(map_room)):
         for j in range(len(map_room[i])):
-            screen.blit(dict_textures[map_room[i][j]], (taille_cases*j+10,taille_cases*i+12))
+            room.blit(dict_textures[map_room[i][j]], (taille_cases*j,taille_cases*i))
             
             if map_room[i][j] == '!': #c'est un mob
                 pos_mob = (taille_cases*j+10,taille_cases*i+12)
                 mobs.append(Mob("snowman",pos_mob[0],pos_mob[1]))
     
     return mobs
-    
-def display_room(screen,map_room):
-    """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
-    screen.fill((0,0,0))
-    mobs = []
 
-    for i in range(len(map_room)):
-        for j in range(len(map_room[i])):
-            screen.blit(dict_textures[map_room[i][j]], (taille_cases*j+10,taille_cases*i+12))
+def update_map(room_surface,i,j,new_element):
+    """Prend en paramètre la surface de la salle, la position de l'élément à changer dans la matrice représentant la salle, et la nouvelle valeur de cet élément"""
+    x = j * taille_cases
+    y = i * taille_cases
+
+    room_surface.blit(dict_textures[new_element],(x,y))
+
+def set_neighbors(initial_pos):
+    neighbors = []
+    initial_x = initial_pos[0]
+    initial_y = initial_pos[1]
+
+    neighbors.append((initial_x + 5,initial_y))
+    neighbors.append((initial_x - 5,initial_y))
+    neighbors.append((initial_x + 5,initial_y+5))
+    neighbors.append((initial_x + 5,initial_y-5))
+    neighbors.append((initial_x - 5,initial_y-5))
+    neighbors.append((initial_x - 5,initial_y+5))
+    neighbors.append((initial_x,initial_y+5))
+    neighbors.append((initial_x,initial_y-5))
+
+    return neighbors
+
+def distance(a_pos,b_pos):
+    a_x = a_pos[0]
+    a_y = a_pos[1]
+    b_x = b_pos[0]
+    b_y = b_pos[1]
+
+    diff_x = max(a_x,b_x) - min(a_x,b_x)
+    diff_y = max(a_y,b_y) - min(a_y,b_y)
+
+    return sqrt(diff_x**2 + diff_y**2)
+    
 
 
 class Player:
@@ -75,6 +104,8 @@ class Player:
         self.direction = "DROITE"
         self.x = pos_x
         self.y = pos_y
+        self.width = self.initial_surf.get_width()
+        self.height = self.initial_surf.get_height()
 
         self.attack_frames = {
             "DROITE": [],
@@ -128,10 +159,77 @@ class Mob:
         self.right_surf = self.initial_surf
         self.left_surf = pygame.transform.flip(self.initial_surf,True,False)
         
+        
         self.x = pos_x
         self.y = pos_y
-        
+        self.width = self.initial_surf.get_width()
+        self.height = 32
+
+        self.death = False
+        self.death_frame = 0
+        self.death_frames = [
+            pygame.image.load("animations/death "+id+"/1.png"),
+            pygame.image.load("animations/death "+id+"/2.png"),
+            pygame.image.load("animations/death "+id+"/3.png"),
+            pygame.image.load("animations/death "+id+"/4.png")
+        ]
         self.direction = "DROITE"
+        self.chemin = []
+
+    def pathfiding(self,player,map_room,ecran):
+        start = time.time()
+        
+        self.chemin = [[(self.x,self.y)]]        
+
+        visited = [(self.x,self.y)]
+        traites = []
+
+        while not self.collide_player(player,self.chemin[-1][-1]):
+            for i in range(len(self.chemin)):
+                last_pos = self.chemin[i][-1]
+                if last_pos not in traites:
+                    traites.append(last_pos)
+                    neighbors = set_neighbors(last_pos)
+                    for neighbor in neighbors:
+                        if not self.collide(map_room,neighbor) and neighbor not in visited and distance(neighbor,(player.x,player.y)) < distance(last_pos,(player.x,player.y))+2.5:
+                            pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect(neighbor[0],neighbor[1],self.width,self.height))                            
+                            pygame.display.update()
+                            self.chemin.append(self.chemin[i]+[neighbor])
+                            visited.append(neighbor)
+        self.chemin = self.chemin[-1][1:]
+        end = time.time()
+        print(end-start)
+
+
+    def collide_player(self,player,mob_pos):
+        player_rect = pygame.rect.Rect(player.x,player.y,player.width,player.height)
+        mob_rect = pygame.rect.Rect(mob_pos[0],mob_pos[1],self.width,self.height)
+
+        if mob_rect.colliderect(player_rect):
+            return True 
+        return False
+
+    def collide(self,map_room,neighbor):
+        """retournes True si le mob collide avec un mur, sinon retournes False"""
+        walls_rect = get_walls_rect(map_room)
+        neighbor_rect = pygame.rect.Rect(neighbor[0],neighbor[1]+5,self.width,self.height)
+        for wall in walls_rect:
+            if neighbor_rect.colliderect(wall):
+                return True
+        return False
+
+
+
+    def animate_death(self):
+        self.death = True
+
+    def update_death(self):
+        if self.death:
+            self.current_frame = self.death_frames[int(self.death_frame)]
+            self.death_frame += 0.2
+            if int(self.death_frame) == len(self.death_frames): #dernière frame deja utilisée
+                self.death_frame = 0
+                self.death = False
         
     def update_pos(self,new_x,new_y):
         self.x = new_x
@@ -148,8 +246,9 @@ class Mob:
 pygame.font.init()
 
 
-def game(screen,player_id):
+def game(screen,player_id):    
     '''Fonction pricipale du jeu actif'''
+    screen.fill((0,0,0))
     clock = pygame.time.Clock()
     
     nb_maps = get_nb_dungeon_maps()
@@ -163,14 +262,14 @@ def game(screen,player_id):
         for ligne in dungeon[key]:
             print(ligne)
     
-
- #Temporaire, avant que le systeme de map sera entierement implemente, affice la salle choisie ---
+    room_surface = pygame.Surface((19*taille_cases,21*taille_cases))
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
-    mobs = create_room(screen,map)
+    mobs = create_room(room_surface,map)
+    screen.blit(room_surface,(10,12))
     print(mobs)
- #-----------------------------------------------------------------------
-    room_surface = pygame.draw.rect(screen,(0,0,0),(10,12,19*taille_cases,21*taille_cases))
+   
+
 
     x_player,y_player = get_player_initial_pos(map)    
     player = Player(pygame.image.load("equiped_characters/"+player_id+"/DROITE.png"),x_player,y_player,player_id)
@@ -203,11 +302,12 @@ def game(screen,player_id):
         exits = detect_exit(map,(player.x,player.y))
         on_chest = player_on_chest(dungeon[dungeon_pos],(player.x,player.y))
         
-        
         ######################
         #---Pathfiding mob---#
         ######################
-        
+        if mobs != []:            
+            mobs[0].pathfiding(player,map,screen)
+            print(mobs[0].chemin)
         
                             
         #Gestions des touches en jeu----------------------
@@ -216,8 +316,8 @@ def game(screen,player_id):
                 return False
             
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_q:
-                    return True
+                #if event.key == pygame.K_q:
+                 #   return True
                 if event.key == pygame.K_DOWN:
                     down = False                    
                 if event.key == pygame.K_UP:
@@ -229,17 +329,33 @@ def game(screen,player_id):
                     
                     
             if event.type == pygame.KEYDOWN: 
+                if event.key == pygame.K_z:
+                    if not mobs[0].collide(map,(mobs[0].x,mobs[0].y-5)):
+                        mobs[0].update_pos(mobs[0].x,mobs[0].y-5)
+                if event.key == pygame.K_q:
+                    if not mobs[0].collide(map,(mobs[0].x-5,mobs[0].y)):
+                        mobs[0].update_pos(mobs[0].x-5,mobs[0].y)
+                if event.key == pygame.K_s:
+                    if not mobs[0].collide(map,(mobs[0].x,mobs[0].y+5)):
+                        mobs[0].update_pos(mobs[0].x,mobs[0].y+5)
+                if event.key == pygame.K_d:
+                    if not mobs[0].collide(map,(mobs[0].x+5,mobs[0].y)):
+                        mobs[0].update_pos(mobs[0].x+5,mobs[0].y)
+
+
+                if event.key == pygame.K_k:
+                    mobs[0].animate_death()
+
                 if event.key == pygame.K_a: #lancement attaque joueur
                     player.start_attack()
-                if event.key == pygame.K_l:
-                    snowman.turn("GAUCHE")
-                if event.key == pygame.K_r:
-                    snowman.turn("DROITE")
+                
                 if event.key == pygame.K_SPACE:
                     if True in exits: #le personnage se trouve sur une des sorties
                         dungeon_pos,pos_player = change_room(dungeon,dungeon_pos,(player.x,player.y),exits)
                         player.update_pos(pos_player[0],pos_player[1])
                         map = dungeon[dungeon_pos] 
+                        screen.fill((0,0,0))
+                        mobs = create_room(room_surface,map)
                          
                 if event.key == pygame.K_e:
                     if on_chest != False: #le personnage collide avec un coffre
@@ -247,6 +363,7 @@ def game(screen,player_id):
                         new_line = line[:on_chest[1]] + '^'+line[on_chest[1]+1:]
                         map[on_chest[0]] = new_line
                         dungeon[dungeon_pos] = map
+                        update_map(room_surface,on_chest[0],on_chest[1],'^')
                         on_chest = False
                         vnc["inventaire"] = ajout_objet_inv(vnc["inventaire"],screen) #variable objets dans objets.py
                         if vnc["inventaire"] == False: #au cas où on appuie sur la croix dans ajout_objet_inv()
@@ -356,13 +473,32 @@ def game(screen,player_id):
             player.turn("DROITE")
         elif left and not right:
             player.turn("GAUCHE")
+        elif up and not(right or left or down):
+            player.turn('HAUT')
+        elif down and not(right or left or up):
+            player.turn("BAS")
+
+        
+        
             
-        
-        display_room(screen,map)
-        
+        screen.fill((0,0,0))
+
+        screen.blit(room_surface,(10,12))
+
+        #Affichage des mobs
+        for mob in mobs :
+            if mob.chemin != []:
+                new_pos = mob.chemin.pop(0)
+                mob.update_pos(new_pos[0],new_pos[1])
+            if mob.death:
+                mob.update_death()
+            screen.blit(mob.current_frame,(mob.x,mob.y))
+
+        #Affichage du joueur
         if player.attack == True:
             player.update_attack()
         screen.blit(player.current_frame,(player.x,player.y)) 
+
         pygame.draw.rect(screen,(0,0,0),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)))
         pygame.draw.rect(screen,(255,255,255),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)),1,border_radius = 40)
         if True in exits: #le personnage est sur une sortie
@@ -377,6 +513,7 @@ def game(screen,player_id):
 
         vies_surf=berp_font.render(str(str(vnc["vies"])+" / "+str(vnc["vies_max"])),1,(255,50,50))
         screen.blit(vies_surf,vies_pos)
+        coeur_pos = (vies_pos[0]+vies_surf.get_width()+10, vies_pos[1])
         screen.blit(heart,coeur_pos)
         screen.blit(shield_icon,shield_pos)
         screen.blit(defense_surf,defense_pos)
