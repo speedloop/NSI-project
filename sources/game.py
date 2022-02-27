@@ -121,17 +121,23 @@ class Player:
         self.attack_frames["GAUCHE"].append(pygame.transform.flip(pygame.image.load("animations/attack "+id+"/3.png"),True,False)) #frame 4 importation
         self.attack = False
         self.attack_frame = 0
+
         self.width = self.initial_surf.get_width()
         self.height = self.initial_surf.get_height()
         self.rect = pygame.rect.Rect((self.x,self.y,self.width,self.height))
+        self.zone_frappe = pygame.rect.Rect(self.x+46,self.y+4,14,27)
+        self.atk = 5
+        self.dealt_dammages = False
 
     def turn(self,direction):
         if direction == "DROITE":
             self.current_frame = self.right_surf
-            self.direction = "DROITE"
+            self.direction = "DROITE"            
+            self.zone_frappe = pygame.rect.Rect(self.x+46,self.y+4,14,27)
         elif direction == "GAUCHE":
             self.current_frame = self.left_surf
             self.direction = "GAUCHE"
+            self.zone_frappe = pygame.rect.Rect(self.x,self.y,14,27)
         elif direction == "HAUT":
             self.current_frame = self.top_surf
         else:
@@ -139,7 +145,11 @@ class Player:
 
     def update_pos(self,new_x,new_y):
         self.x = new_x
-        self.y = new_y
+        self.y = new_y        
+        if self.direction == "DROITE":
+            self.zone_frappe = pygame.rect.Rect(self.x+46,self.y+4,14,27)
+        if self.direction == "GAUCHE":            
+            self.zone_frappe = pygame.rect.Rect(self.x,self.y,14,27)
 
     def start_attack(self):
         self.attack = True
@@ -147,13 +157,21 @@ class Player:
     def update_attack(self):
         if self.attack == True:
             self.current_frame = self.attack_frames[self.direction][int(self.attack_frame)]
-            self.attack_frame += 0.3
+            self.attack_frame += 0.25
             if int(self.attack_frame) == len(self.attack_frames[self.direction]): #dernière frame deja utilisée
                 self.attack_frame = 0
                 self.attack = False
+                self.dealt_dammages = False
+
+    def collide_sword_mob(self,mob):
+        mob_rect = pygame.rect.Rect(mob.x,mob.y,mob.width,mob.height)
+        if self.zone_frappe.colliderect(mob_rect):
+            return True
+        else: return False
                 
 class Mob:
     def __init__(self,id,pos_x,pos_y):
+        self.id = id 
         self.initial_surf = pygame.image.load("mobs/"+id+".png")
         self.current_frame = self.initial_surf
         self.right_surf = self.initial_surf
@@ -164,6 +182,8 @@ class Mob:
         self.y = pos_y
         self.width = self.initial_surf.get_width()
         self.height = 32
+
+        self.attack,self.defense,self.reach,self.lives = self.import_stats()
 
         self.death = False
         self.death_frame = 0
@@ -176,6 +196,29 @@ class Mob:
         self.direction = "DROITE"
         self.chemin = []
 
+
+    def take_dammage(self,player_atk):
+        damages = player_atk - self.defense
+        print("snowman takes ",damages,'damages')
+        self.lives -= damages 
+        if self.lives <= 0:
+            self.animate_death()
+
+    def import_stats(self):
+        with open("stats_mobs/"+self.id+".stats",'r') as file:
+            data = file.readlines()
+            if data[0][0] == '#':
+                data.pop(0)
+            for i in range(len(data)): 
+                data[i] = data[i].rstrip('\n')
+            atk = int(data[0])
+            deff =int(data[1])
+            reach = int(data[2])
+            lives = int(data[3])
+            print(atk,deff,reach)
+            file.close()
+        return atk,deff,reach,lives
+
     def pathfiding(self,player,map_room,ecran):
         start = time.time()
         
@@ -184,26 +227,31 @@ class Mob:
         visited = [(self.x,self.y)]
         traites = []
 
-        while not self.collide_player(player,self.chemin[-1][-1]):
-            for i in range(len(self.chemin)):
-                last_pos = self.chemin[i][-1]
+        while 1:
+            for i in range(len(self.chemin)):                
+                last_pos = self.chemin[i][-1]                
                 if last_pos not in traites:
                     traites.append(last_pos)
                     neighbors = set_neighbors(last_pos)
                     for neighbor in neighbors:
                         if not self.collide(map_room,neighbor) and neighbor not in visited and distance(neighbor,(player.x,player.y)) < distance(last_pos,(player.x,player.y))+2.5:
-                            pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect(neighbor[0],neighbor[1],self.width,self.height))                            
+                            
+                            pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect(neighbor[0],neighbor[1]+5,self.width,self.height))                            
                             pygame.display.update()
                             self.chemin.append(self.chemin[i]+[neighbor])
                             visited.append(neighbor)
-        self.chemin = self.chemin[-1][1:]
-        end = time.time()
-        print(end-start)
+                            if self.collide_player(player,neighbor):
+                                self.chemin = self.chemin[-1][1:]
+                                end = time.time()
+                                print(end-start)
+                                return True
+                
+        
 
 
     def collide_player(self,player,mob_pos):
         player_rect = pygame.rect.Rect(player.x,player.y,player.width,player.height)
-        mob_rect = pygame.rect.Rect(mob_pos[0],mob_pos[1],self.width,self.height)
+        mob_rect = pygame.rect.Rect(mob_pos[0],mob_pos[1]+5,self.width,self.height)
 
         if mob_rect.colliderect(player_rect):
             return True 
@@ -305,9 +353,9 @@ def game(screen,player_id):
         ######################
         #---Pathfiding mob---#
         ######################
-        if mobs != []:            
-            mobs[0].pathfiding(player,map,screen)
-            print(mobs[0].chemin)
+        #if mobs != []:            
+         #   mobs[0].pathfiding(player,map,screen)
+          #  print(mobs[0].chemin)
         
                             
         #Gestions des touches en jeu----------------------
@@ -343,8 +391,6 @@ def game(screen,player_id):
                         mobs[0].update_pos(mobs[0].x+5,mobs[0].y)
 
 
-                if event.key == pygame.K_k:
-                    mobs[0].animate_death()
 
                 if event.key == pygame.K_a: #lancement attaque joueur
                     player.start_attack()
@@ -497,6 +543,11 @@ def game(screen,player_id):
         #Affichage du joueur
         if player.attack == True:
             player.update_attack()
+            if int(player.attack_frame) == 2:                
+                for i in range(len(mobs)):
+                    if player.collide_sword_mob(mobs[i]) and not player.dealt_dammages:  
+                        player.dealt_dammages = True                      
+                        mobs[i].take_dammage(player.atk)
         screen.blit(player.current_frame,(player.x,player.y)) 
 
         pygame.draw.rect(screen,(0,0,0),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)))
