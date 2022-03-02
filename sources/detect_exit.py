@@ -14,7 +14,7 @@ def get_exits_rects(map_room):
 
 
 
-def detect_exit(map_room,pos_player):
+def detect_exit(map_room,player_pos):
     
     character_on_exit = False
     
@@ -27,7 +27,12 @@ def detect_exit(map_room,pos_player):
     
     exits_rects = get_exits_rects(map_room)
     
-    player_rect = pygame.rect.Rect(pos_player + (largeur_personnage,hauteur_personnage))
+    min_x = player_pos[0] + 15    
+    min_y = player_pos[1] + 5   
+    max_x = min_x + largeur_personnage_sans_epee
+    max_y = min_y + hauteur_personnage_sans_epee
+
+    player_rect = pygame.rect.Rect((min_x,min_y,largeur_personnage_sans_epee,hauteur_personnage_sans_epee))   #definition d'une zone autour du personnage
     
     ouest,nord,est,sud = False,False,False,False
     

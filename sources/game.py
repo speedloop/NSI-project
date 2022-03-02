@@ -51,7 +51,7 @@ def create_room(room,map_room):
             
             if map_room[i][j] == '!': #c'est un mob
                 pos_mob = (taille_cases*j+10,taille_cases*i+12)
-                mobs.append(Mob("snowman",pos_mob[0],pos_mob[1]))
+                mobs.append(Mob("snowman",pos_mob[0],pos_mob[1],(j,i)))
     
     return mobs
 
@@ -170,14 +170,14 @@ class Player:
         else: return False
                 
 class Mob:
-    def __init__(self,id,pos_x,pos_y):
+    def __init__(self,id,pos_x,pos_y,map_pos):  #map_pos = position dans la matrice de la map au moment du spawn
         self.id = id 
         self.initial_surf = pygame.image.load("mobs/"+id+".png")
         self.current_frame = self.initial_surf
         self.right_surf = self.initial_surf
         self.left_surf = pygame.transform.flip(self.initial_surf,True,False)
         
-        
+        self.map_x,self.map_y = map_pos
         self.x = pos_x
         self.y = pos_y
         self.width = self.initial_surf.get_width()
@@ -193,6 +193,8 @@ class Mob:
             pygame.image.load("animations/death "+id+"/3.png"),
             pygame.image.load("animations/death "+id+"/4.png")
         ]
+        self.dead = False
+
         self.direction = "DROITE"
         self.chemin = []
 
@@ -215,7 +217,6 @@ class Mob:
             deff =int(data[1])
             reach = int(data[2])
             lives = int(data[3])
-            print(atk,deff,reach)
             file.close()
         return atk,deff,reach,lives
 
@@ -276,6 +277,7 @@ class Mob:
             self.current_frame = self.death_frames[int(self.death_frame)]
             self.death_frame += 0.2
             if int(self.death_frame) == len(self.death_frames): #dernière frame deja utilisée
+                self.dead = True
                 self.death_frame = 0
                 self.death = False
         
@@ -291,6 +293,19 @@ class Mob:
             self.current_frame = self.left_surf
             self.direction = "GAUCHE"
 
+
+
+class Corpse:
+    def __init__(self,id,init_x,init_y):
+        self.id = id
+        self.image = pygame.image.load("animations/death "+id+"/4.png")
+        self.x = init_x
+        self.y = init_y
+
+
+
+
+
 pygame.font.init()
 
 
@@ -304,18 +319,13 @@ def game(screen,player_id):
     dungeon_map = get_map_from_file("map/carte "+dungeon_map_number)
     dungeon = create_dungeon(dungeon_map)
     dungeon_pos = init_pos_dungeon(dungeon)
-    print(dungeon_pos)
-    for key in dungeon.keys():
-        print(key)
-        for ligne in dungeon[key]:
-            print(ligne)
     
     room_surface = pygame.Surface((19*taille_cases,21*taille_cases))
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
     mobs = create_room(room_surface,map)
+    corpses = [] #liste des cadavres de mobs sur la map
     screen.blit(room_surface,(10,12))
-    print(mobs)
    
 
 
@@ -402,6 +412,7 @@ def game(screen,player_id):
                         map = dungeon[dungeon_pos] 
                         screen.fill((0,0,0))
                         mobs = create_room(room_surface,map)
+                        corpses = []
                          
                 if event.key == pygame.K_e:
                     if on_chest != False: #le personnage collide avec un coffre
@@ -540,7 +551,7 @@ def game(screen,player_id):
                 mob.update_death()
             screen.blit(mob.current_frame,(mob.x,mob.y))
 
-        #Affichage du joueur
+        #Gestion de l'attaque du joueur
         if player.attack == True:
             player.update_attack()
             if int(player.attack_frame) == 2:                
@@ -548,7 +559,22 @@ def game(screen,player_id):
                     if player.collide_sword_mob(mobs[i]) and not player.dealt_dammages:  
                         player.dealt_dammages = True                      
                         mobs[i].take_dammage(player.atk)
+                for mob in mobs:
+                    if mob.dead == True:
+                        corpses.append(Corpse(mob.id,mob.x,mob.y))
+                        mobs.pop(mobs.index(mob))
+                        #suppression du mob dans la map initiale du donjon, afin qu'il n'aparaisse plus si l'on revient dans la salle
+                        line = map[mob.map_y]
+                        new_line = line[:mob.map_x] + '_'+line[mob.map_x+1:]
+                        map[mob.map_y] = new_line
+                        dungeon[dungeon_pos] = map
+
+        for corpse in corpses:
+            screen.blit(corpse.image,(corpse.x,corpse.y))
+
         screen.blit(player.current_frame,(player.x,player.y)) 
+
+
 
         pygame.draw.rect(screen,(0,0,0),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)))
         pygame.draw.rect(screen,(255,255,255),(19*taille_cases+20,20*taille_cases+12,1300-(19*taille_cases+30),800-(20*taille_cases+24)),1,border_radius = 40)
