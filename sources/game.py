@@ -1,5 +1,6 @@
 
 import pygame,os,random,time
+import numpy as np
 from queue import PriorityQueue
 from math import sqrt
 
@@ -44,16 +45,21 @@ def create_room(room,map_room):
     """Cette fonction affiche la salle en fontion de ce qui est encode dans le fichier choisi"""
     room.fill((0,0,0))
     mobs = []
+    walls = []
 
     for i in range(len(map_room)):
         for j in range(len(map_room[i])):
+            if map_room[i][j] == '#':
+                pos_wall = (taille_cases*j+10,taille_cases*i+12)
+                walls.append(Wall(pos_wall[0],pos_wall[1]))
+
             room.blit(dict_textures[map_room[i][j]], (taille_cases*j,taille_cases*i))
             
             if map_room[i][j] == '!': #c'est un mob
                 pos_mob = (taille_cases*j+10,taille_cases*i+12)
                 mobs.append(Mob("snowman",pos_mob[0],pos_mob[1],(j,i)))
     
-    return mobs
+    return mobs,walls
 
 def update_map(room_surface,i,j,new_element):
     """Prend en paramètre la surface de la salle, la position de l'élément à changer dans la matrice représentant la salle, et la nouvelle valeur de cet élément"""
@@ -88,6 +94,13 @@ def distance(a_pos,b_pos):
     diff_y = max(a_y,b_y) - min(a_y,b_y)
 
     return sqrt(diff_x**2 + diff_y**2)
+
+
+class Wall:
+    def __init__(self,pos_x,pos_y):
+        self.x = pos_x
+        self.y = pos_y
+        self.rect = pygame.rect.Rect(self.x,self.y,taille_cases,taille_cases)
     
 
 
@@ -196,7 +209,7 @@ class Mob:
         self.dead = False
 
         self.direction = "DROITE"
-        self.chemin = []
+        self.next_pos = ()
 
 
     def take_dammage(self,player_atk):
@@ -220,32 +233,103 @@ class Mob:
             file.close()
         return atk,deff,reach,lives
 
-    def pathfiding(self,player,map_room,ecran):
+    def pathfiding(self,player,walls,ecran):        
         start = time.time()
+        player_pos = (player.x//5,player.y//5)   #conversion de la position du joueur dans la matrice des positions possibles du mob 
+         
+        positions = np.zeros((800//5,1300//5))
+        positions[self.y//5][self.x//5] = 1  
+
+        nodes = [(self.x//5,self.y//5)]     
+        continuer = True
+        nodes_value = 2
+        while continuer :
+            next_nodes = []
+            for node in nodes:
+                x,y = node
+                for yneighbor in [y-1,y,y+1]:
+                    for xneighbor in [x-1,x,x+1]:                        
+                        if not self.collide(walls,(xneighbor*5,yneighbor*5)): 
+                            print("no collide")                           
+                            if positions[yneighbor][xneighbor] == 0:
+                                positions[yneighbor][xneighbor] = nodes_value
+                                next_nodes.append((xneighbor,yneighbor))
+                            if (xneighbor,yneighbor) == player_pos:
+                                print("collide player")
+                                continuer = False
+                            ################################
+                            #---Reconstruction du chemin---#
+                            ################################
+                                actual_node = (xneighbor,yneighbor)
+                                node_number = nodes_value
+                                while node_number != 2:
+                                    i = actual_node[1]-1
+                                    j = actual_node[0]-1
+                                    while positions[i][j] != node_number -1:
+                                        if j == actual_node[0] + 1:
+                                            j = actual_node[0]-1
+                                            i+=1
+                                        else: j+=1
+                                    node_number-=1
+                                    actual_node = (j,i)
+                                self.next_pos = (actual_node[0]*5,actual_node[1]*5)
+
+            nodes_value += 1
+
+            nodes = next_nodes
+
+
+
         
-        self.chemin = [[(self.x,self.y)]]        
 
-        visited = [(self.x,self.y)]
-        traites = []
+        """visites = []
+        for i in range(800//5):
+            ligne = []
+            for j in range(1300//5):
+                ligne.append(0)
+            visites.append(ligne)
 
-        while 1:
-            for i in range(len(self.chemin)):                
-                last_pos = self.chemin[i][-1]                
-                if last_pos not in traites:
-                    traites.append(last_pos)
-                    neighbors = set_neighbors(last_pos)
-                    for neighbor in neighbors:
-                        if not self.collide(map_room,neighbor) and neighbor not in visited and distance(neighbor,(player.x,player.y)) < distance(last_pos,(player.x,player.y))+2.5:
-                            
-                            pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect(neighbor[0],neighbor[1]+5,self.width,self.height))                            
-                            pygame.display.update()
-                            self.chemin.append(self.chemin[i]+[neighbor])
-                            visited.append(neighbor)
-                            if self.collide_player(player,neighbor):
-                                self.chemin = self.chemin[-1][1:]
-                                end = time.time()
-                                print(end-start)
-                                return True
+        visites[self.x//5][self.y//5] = 1
+
+
+
+        while 1:               
+            #print(len(self.chemin))
+            next_chemin = []
+            for chemin in self.chemin:
+            
+                #print(chemin)
+            
+                last_pos = chemin[-1]                
+                
+                neighbors = []
+                for k in range(-5,6,5):
+                    x = last_pos[0] + k
+                    for j in range(-5,6,5):
+                        y = last_pos[1] + j                    
+                        if visites[x//5][y//5] == 0:
+                            visites[x//5][y//5] = 1
+                            neighbors.append((x,y))  
+                            #print((x,y))
+
+
+
+                for neighbor in neighbors:
+                    if not self.collide(map_room,neighbor) and distance(neighbor,(player.x,player.y)) < distance(last_pos,(player.x,player.y))+2.5:                               
+                        #pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect(neighbor+(self.width,self.height)))
+                        #pygame.display.update()
+                        next_chemin.append(self.chemin[0]+[neighbor])
+                        if self.collide_player(player,neighbor):
+                            self.chemin = self.chemin[-1][1:]
+                            end = time.time()
+                            print(end-start)
+                            return True
+            self.chemin = []
+            for chemin in next_chemin:
+                self.chemin.append(chemin)"""
+            
+            
+
                 
         
 
@@ -258,14 +342,17 @@ class Mob:
             return True 
         return False
 
-    def collide(self,map_room,neighbor):
+    def collide(self,walls,neighbor):
         """retournes True si le mob collide avec un mur, sinon retournes False"""
-        walls_rect = get_walls_rect(map_room)
+        start = time.time()
+        
         neighbor_rect = pygame.rect.Rect(neighbor[0],neighbor[1]+5,self.width,self.height)
-        for wall in walls_rect:
-            if neighbor_rect.colliderect(wall):
+
+        for wall in walls:
+            if neighbor_rect.colliderect(wall.rect):
                 return True
         return False
+        
 
 
 
@@ -323,7 +410,7 @@ def game(screen,player_id):
     room_surface = pygame.Surface((19*taille_cases,21*taille_cases))
     path_to_map = "rooms/lobby/lobby"
     map = get_map_from_file(path_to_map)
-    mobs = create_room(room_surface,map)
+    mobs,walls = create_room(room_surface,map)
     corpses = [] #liste des cadavres de mobs sur la map
     screen.blit(room_surface,(10,12))
    
@@ -363,9 +450,8 @@ def game(screen,player_id):
         ######################
         #---Pathfiding mob---#
         ######################
-        #if mobs != []:            
-         #   mobs[0].pathfiding(player,map,screen)
-          #  print(mobs[0].chemin)
+        if mobs != []:            
+            mobs[0].pathfiding(player,walls,screen)
         
                             
         #Gestions des touches en jeu----------------------
@@ -411,7 +497,7 @@ def game(screen,player_id):
                         player.update_pos(pos_player[0],pos_player[1])
                         map = dungeon[dungeon_pos] 
                         screen.fill((0,0,0))
-                        mobs = create_room(room_surface,map)
+                        mobs,walls = create_room(room_surface,map)
                         corpses = []
                          
                 if event.key == pygame.K_e:
@@ -544,8 +630,9 @@ def game(screen,player_id):
 
         #Affichage des mobs
         for mob in mobs :
-            if mob.chemin != []:
-                new_pos = mob.chemin.pop(0)
+            if mob.next_pos != ():
+                print("moving to ",mob.next_pos)
+                new_pos = mob.next_pos
                 mob.update_pos(new_pos[0],new_pos[1])
             if mob.death:
                 mob.update_death()
