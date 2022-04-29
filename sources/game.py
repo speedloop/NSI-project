@@ -94,6 +94,13 @@ def distance(a_pos,b_pos):
     diff_y = max(a_y,b_y) - min(a_y,b_y)
 
     return sqrt(diff_x**2 + diff_y**2)
+    
+    
+def collide_walls(walls,pos):
+    for wall in walls:
+        if wall.collidepoint(pos):
+            return True
+    return False
 
 
 class Wall:
@@ -101,6 +108,11 @@ class Wall:
         self.x = pos_x
         self.y = pos_y
         self.rect = pygame.rect.Rect(self.x,self.y,taille_cases,taille_cases)
+        
+    def collidepoint(self,pos_point):
+        if self.rect.collidepoint(pos_point):
+            return True
+        else: return False
     
 
 
@@ -237,7 +249,7 @@ class Mob:
         start = time.time()
         player_pos = (player.x//5,player.y//5)   #conversion de la position du joueur dans la matrice des positions possibles du mob 
          
-        positions = np.zeros((800//5,1300//5))
+        positions = np.zeros((800//5,1300//5)) #positions possibles 
         positions[self.y//5][self.x//5] = 1  
 
         nodes = [(self.x//5,self.y//5)]     
@@ -248,18 +260,18 @@ class Mob:
             for node in nodes:
                 x,y = node
                 for yneighbor in [y-1,y,y+1]:
-                    for xneighbor in [x-1,x,x+1]:                        
-                        if not self.collide(walls,(xneighbor*5,yneighbor*5)): 
-                            print("no collide")                           
+                    for xneighbor in [x-1,x,x+1]:
+                        if not collide_walls(walls,(xneighbor*5,yneighbor*5)):
+                            print("no collide")
                             if positions[yneighbor][xneighbor] == 0:
                                 positions[yneighbor][xneighbor] = nodes_value
                                 next_nodes.append((xneighbor,yneighbor))
                             if (xneighbor,yneighbor) == player_pos:
                                 print("collide player")
                                 continuer = False
-                            ################################
-                            #---Reconstruction du chemin---#
-                            ################################
+                                ################################
+                                #---Reconstruction du chemin---#
+                                ################################
                                 actual_node = (xneighbor,yneighbor)
                                 node_number = nodes_value
                                 while node_number != 2:
