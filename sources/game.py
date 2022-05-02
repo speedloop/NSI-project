@@ -196,6 +196,8 @@ class Player:
                 
 class Mob:
     def __init__(self,id,pos_x,pos_y,map_pos):  #map_pos = position dans la matrice de la map au moment du spawn
+        self.speed = 5
+    
         self.id = id 
         self.initial_surf = pygame.image.load("mobs/"+id+".png")
         self.current_frame = self.initial_surf
@@ -244,6 +246,54 @@ class Mob:
             lives = int(data[3])
             file.close()
         return atk,deff,reach,lives
+        
+    def easy_pathfiding(self, player, walls):
+        
+        vx = player.x - self.x
+        vy = player.y - self.y                
+            
+        next_x = self.x + vx//5
+        next_y = self.y + vy//5                    
+                    
+        collide_vx = False
+        collide_vy = False
+        collide_oppose_vx = False
+        collide_oppose_vy = False
+        
+        for wall in walls:
+            if wall.rect.collidepoint((self.x,next_y)): #collide côté vy
+                collide_vy = True
+            elif wall.rect.collidepoint((next_x,self.y)): #collide côté vx
+                collide_vx = True
+            elif wall.rect.collidepoint((self.x, self.y - vy//5)): #collide côté opposé vy
+                collide_oppose_vy = True
+            elif wall.rect.collidepoint((self.x - vx//5, self.y)): #collide côté opposé vx
+                collide_oppose_vx = True
+        
+        if collide_vy:
+            if not collide_vx:
+                next_y = self.y
+            else:
+                if not collide_oppose_vy:
+                    next_x = self.x
+                    next_y = self.y -vy//5
+                else:
+                    next_y = self.y
+                    if not collide_oppose_vx:
+                        next_x = self.x - vx//5
+                    else:
+                        next_x = self.x
+        else:
+            if collide_vx:
+                next_x = self.x 
+                
+        return (next_x,next_y)
+                    
+        
+                    
+                    
+                
+        
 
     def pathfiding(self,player,walls,ecran):        
         start = time.time()
@@ -252,7 +302,7 @@ class Mob:
         positions = np.zeros((800//5,1300//5)) #positions possibles 
         positions[self.y//5][self.x//5] = 1  
 
-        nodes = [(self.x//5,self.y//5)]     
+        nodes = [(self.x//5,self.y//5)]  
         continuer = True
         nodes_value = 2
         while continuer :
@@ -261,9 +311,12 @@ class Mob:
                 x,y = node
                 for yneighbor in [y-1,y,y+1]:
                     for xneighbor in [x-1,x,x+1]:
-                        if not collide_walls(walls,(xneighbor*5,yneighbor*5)):
-                            print("no collide")
-                            if positions[yneighbor][xneighbor] == 0:
+                        if positions[yneighbor][xneighbor] == 0:
+                            if not collide_walls(walls,(xneighbor*5,yneighbor*5)):
+                                #pygame.draw.rect(ecran,(255,255,255),pygame.rect.Rect((xneighbor*5,yneighbor*5)+(self.width,self.height)))
+                                #pygame.display.update()
+                                #ecran.fill((0,0,0))
+                            
                                 positions[yneighbor][xneighbor] = nodes_value
                                 next_nodes.append((xneighbor,yneighbor))
                             if (xneighbor,yneighbor) == player_pos:
@@ -462,8 +515,11 @@ def game(screen,player_id):
         ######################
         #---Pathfiding mob---#
         ######################
-        if mobs != []:            
+        if mobs != []: 
+            start = time.time()
             mobs[0].pathfiding(player,walls,screen)
+            end = time.time()
+            print(end-start)
         
                             
         #Gestions des touches en jeu----------------------
@@ -643,7 +699,6 @@ def game(screen,player_id):
         #Affichage des mobs
         for mob in mobs :
             if mob.next_pos != ():
-                print("moving to ",mob.next_pos)
                 new_pos = mob.next_pos
                 mob.update_pos(new_pos[0],new_pos[1])
             if mob.death:
