@@ -2,7 +2,7 @@
 import pygame,os,random,time
 import numpy as np
 from queue import PriorityQueue
-from math import sqrt
+from math import sqrt,copysign
 
 from sources.collide import test_collide,get_walls_rect
 from sources.detect_exit import detect_exit
@@ -246,14 +246,82 @@ class Mob:
             lives = int(data[3])
             file.close()
         return atk,deff,reach,lives
+
+    def ciblage(self,player,walls):
+        """renvoie True si le mob peut viser le joueur, False sinon"""
+
+        i_mob = (self.y[1]-12)//taille_cases
+        j_mob = (self.x[0]-10)//taille_cases
+
+        i_player = (player.y[1]-12)//taille_cases
+        j_player = (player.x[0]-10)//taille_cases
+
+        if i_mob == i_player or j_mob == j_player:
+            return True
+        else: 
+            return False
+
+        """vx = int(player.x - self.x)
+        vy = int(player.y - self.y)
+
+        for i in range(1,max(vx,vy),5):
+            for wall in walls:
+                if abs(vx) > abs(vy):
+                    check_pos = (self.x + copysign(i,vx), self.y + copysign(i*vy/vx,vy))
+                elif abs(vy) > abs(vx):
+                    check_pos = (self.x + copysign(i*vx/vy,vx), self.y + copysign(i,vy))
+                else:
+                    check_pos = (self.x + copysign(i,vx), self.y + copysign(i,vy))
+
+                check_rect = check_pos + (32,37)
+
+                if wall.rect.colliderect(check_rect):
+                    return False
+        return True"""
+
         
     def easy_pathfiding(self, player, walls):
         
         vx = player.x - self.x
-        vy = player.y - self.y                
-            
-        next_x = self.x + vx//5
-        next_y = self.y + vy//5                    
+        vy = player.y - self.y  
+
+        print("vx : ",vx)
+        print("vy : ",vy)              
+
+        if abs(vx) > abs(vy):   
+            if vx > 0:                     
+                next_x = self.x + 5
+            else:
+                next_x = self.x - 5
+
+            if vy >= 0:
+                next_y = self.y + (5 * vy/vx)                    
+            else:
+                next_y = self.y - (5 * vy/vx)
+
+        elif abs(vy) > abs(vx):
+            if vy > 0:                     
+                next_y = self.y + 5
+            else:
+                next_y = self.y - 5
+
+            if vx >= 0:
+                next_x = self.x + (5 * vx/vy)                    
+            else:
+                next_x = self.x - (5 * vx/vy)
+        else:
+            if vx > 0:                     
+                next_x = self.x + 5
+            else:
+                next_x = self.x - 5
+
+            if vy >= 0:
+                next_y = self.y + 5                  
+            else:
+                next_y = self.y - 5
+
+        print("next_x : ", next_x)
+        print("next_y : ", next_y)
                     
         collide_vx = False
         collide_vy = False
@@ -276,18 +344,37 @@ class Mob:
             else:
                 if not collide_oppose_vy:
                     next_x = self.x
-                    next_y = self.y -vy//5
+                    if abs(vx) > abs(vy) :
+                        if vy > 0:
+                            next_y = self.y - (5 * vy/vx)
+                        else:
+                            next_y = self.y + (5 * vy/vx)
+                    elif abs(vy) >= abs(vx):
+                        if vy > 0:
+                            next_y = self.y - 5                    
+                        else:
+                            next_y = self.y + 5
                 else:
                     next_y = self.y
                     if not collide_oppose_vx:
-                        next_x = self.x - vx//5
+                        if abs(vx) >= abs(vy) :
+                            if vx > 0:
+                                next_x = self.x - 5
+                            else:
+                                next_x = self.x + 5
+                        elif abs(vx) < abs(vy):
+                            if vx > 0:
+                                next_x = self.x - (5 * vx/vy) 
+                            else:
+                                next_x = self.x + (5 * vx/vy) 
                     else:
                         next_x = self.x
         else:
             if collide_vx:
                 next_x = self.x 
                 
-        return (next_x,next_y)
+        self.next_pos = (next_x,next_y)
+        return (int(next_x),int(next_y))
                     
         
                     
@@ -511,15 +598,29 @@ def game(screen,player_id):
         clock.tick(30)
         exits = detect_exit(map,(player.x,player.y))
         on_chest = player_on_chest(dungeon[dungeon_pos],(player.x,player.y))
+
+        ###########################
+        #---Monstre cible joueur--#
+        ###########################
+        for mob in mobs:
+            start = time.time()
+            if mob.ciblage(player,walls):
+                end = time.time()
+                print(end-start)
+                print("monstre nb",mobs.index(mob)," peut cibler le joueur")
+
         
         ######################
         #---Pathfiding mob---#
         ######################
-        if mobs != []: 
+        """if mobs != []: 
             start = time.time()
-            mobs[0].pathfiding(player,walls,screen)
+            print("actual_pos : ",(mobs[0].x,mobs[0].y))
+            new_pos = mobs[0].easy_pathfiding(player,walls)
+            print("new pos : ",new_pos)
+            print("player_pos :",(player.x,player.y))
             end = time.time()
-            print(end-start)
+            print(end-start)"""
         
                             
         #Gestions des touches en jeu----------------------
